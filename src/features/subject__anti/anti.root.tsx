@@ -41,7 +41,6 @@ export const AntiSubjectRoot: React.FC = () => {
         body: data,
       })
       .then(() => {
-        alert('asfa')
         getApi.refetch()
       })
   }
