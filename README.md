@@ -7,6 +7,8 @@ This architecture intended to scalable with Render As Fetch Pattern and co-locat
 Sample code includes some features for explanation.
 
 - Create, Read, Delete
+- Suspence based loading
+- Skeleton screen
 - API is mocked by msw
   - https://github.com/koushisa/recoil-aspida-sample/tree/main/src/mocks
 
