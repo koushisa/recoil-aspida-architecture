@@ -1,18 +1,18 @@
-import { AccordionPanel } from '@chakra-ui/react'
+import { AccordionPanel, Button } from '@chakra-ui/react'
 import { TextSuspence } from '@/components/TextSuspence'
 import { aspida } from '@/lib/aspida'
 import { atomWithQueryFamily } from '@/lib/recoil/integrations/query/atomWithQuery/atomWithQuery'
 
 const {
-  query: [state, useSandboxSubject],
-  mutation: [_, __],
+  query: [state, useSandboxSubjectItem],
+  mutation: [_, useSandboxSubjectItemMutation],
 } = atomWithQueryFamily({
   query: (id: number) => () => {
     return aspida.api.v1.subjects._subjectId(id).$get()
   },
   mutations: (param) => {
     return {
-      testCallbackWithFamily: (s) => (obj: { id: number; fuga: string }) => {
+      log: (s) => (obj) => {
         const current = s.snapshot.getLoadable(state(param)).getValue()
 
         console.log({ param, current, obj: JSON.stringify(obj) })
@@ -43,10 +43,12 @@ export const SandboxSubjectItem: React.FC<Props> = (props) => {
 const Comp: React.FC<Props> = (props) => {
   const { subjectId } = props
 
-  const subject = useSandboxSubject({
+  const subject = useSandboxSubjectItem({
     param: subjectId,
     keepPrevious: false,
   })
+
+  const { refetch, log } = useSandboxSubjectItemMutation(subjectId)
 
   if (subject.state === 'hasError') {
     return (
@@ -60,6 +62,15 @@ const Comp: React.FC<Props> = (props) => {
 
   return (
     <AccordionPanel height={BODY_HEIGHT}>
+      <Button onClick={refetch}>refetch</Button>
+      <Button
+        onClick={() =>
+          log({
+            hoge: 'hoge',
+          })
+        }>
+        log
+      </Button>
       <pre>{subject.getValue().description}</pre>
     </AccordionPanel>
   )

@@ -31,8 +31,8 @@ export function atomWithQuery<T, Mutations extends MutationsInput>(
   const { key = nanoid(), mutations: mutation = {} } = options
 
   const {
-    query: [queryState, useBaseQuery],
-    mutation: [mutationState, useBaseMutation],
+    query: [baseQueryState, useBaseQuery],
+    mutation: [baseMutationState, useBaseMutation],
   } = atomWithQueryFamily({
     ...options,
     key,
@@ -47,8 +47,8 @@ export function atomWithQuery<T, Mutations extends MutationsInput>(
   const useMutation = () => useBaseMutation(key)
 
   return {
-    query: [queryState(key), useQuery],
-    mutation: [mutationState(key), useMutation],
+    query: [baseQueryState(key), useQuery],
+    mutation: [baseMutationState(key), useMutation],
   } as any
 }
 

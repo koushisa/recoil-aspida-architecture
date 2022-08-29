@@ -15,6 +15,29 @@ const mockRestHandlers = mswMocks
 export const worker = setupWorker(...(mockRestHandlers as any))
 
 const handlers = [
+  rest.get<Subject[]>(`${BASE_API_URL}/subjects`, async (req, res, ctx) => {
+    await delay(300)
+
+    if (Math.random() < 0.1) {
+      return res(ctx.status(500), ctx.json({ status: 'error' }))
+    }
+
+    const name = req.url.searchParams.get('name')
+
+    const subs = mswDb.subject.findMany({
+      where: {
+        name:
+          name !== null
+            ? {
+                contains: name,
+              }
+            : undefined,
+      },
+    })
+
+    return res(ctx.status(200), ctx.json(subs))
+  }),
+
   rest.post<Subject>(`${BASE_API_URL}/subjects`, async (req, res, ctx) => {
     await delay(300)
 

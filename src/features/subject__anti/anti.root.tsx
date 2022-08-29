@@ -16,9 +16,9 @@ export const {
   entry({ get }) {
     return aspida.api.v1.subjects
   },
-  option({ get }, current) {
+  option({ get }, currentOption) {
     return {
-      query: {},
+      query: currentOption.query,
     }
   },
 })
@@ -66,18 +66,20 @@ export const AntiSubjectRoot: React.FC = () => {
   return (
     <>
       <h2>anti form</h2>
-      <AntiSubjectForm
-        formStatus={postApi}
-        onCreate={createSubject}
-        onCreateOptimistic={createOptimisticSubject}
-      />
-
-      <Box margin={4}></Box>
+      <Box padding={4}>
+        <AntiSubjectForm
+          formStatus={postApi}
+          onCreate={createSubject}
+          onCreateOptimistic={createOptimisticSubject}
+        />
+      </Box>
 
       <h2>anti list</h2>
-      <AppSpinnerSuspence>
-        <AntiSubjectList subjects={subjects.getValue()} />
-      </AppSpinnerSuspence>
+      <Box padding={4}>
+        <AppSpinnerSuspence>
+          <AntiSubjectList subjects={subjects.getValue()} />
+        </AppSpinnerSuspence>
+      </Box>
     </>
   )
 }

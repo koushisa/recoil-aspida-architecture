@@ -10,7 +10,7 @@ export type Subject = {
 export type Methods = DefineMethods<{
   get: {
     query?: {
-      disabled?: number
+      name?: string
     }
 
     resBody: Subject[]

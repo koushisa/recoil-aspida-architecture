@@ -115,26 +115,44 @@ export const atomWithAspida = <E extends AspidaEntry>(
         return RecoilLoadable.loading() as unknown as Promise<unknown>
       }
 
+      isQueryInitialized = true
+
       const api = get(delegatedEntry)
       const option = get(optionState)
 
-      isQueryInitialized = true
-
-      return api.$get({
+      const apiOption = {
         ...option,
         // possible to override from others
         ...get(delegatedOption),
-      })
+      }
+
+      return api.$get(apiOption)
     },
   })
 
   type InnerGetApi = Pick<GetApiObj<E>, 'call' | 'reload'>
-  const innerGetApi = selector({
+  const innerGetApi = selector<InnerGetApi>({
     key: `${key}/innerGetApi`,
-    get: ({ getCallback }) =>
-      getCallback(
-        (callback) => (): InnerGetApi => ({
-          async call(query) {
+    get: ({ getCallback }) => {
+      return {
+        call: getCallback((callback) => async (query) => {
+          const option = callback.snapshot.getLoadable(optionState).getValue()
+          const newOption = {
+            ...option,
+            query: isUpdater(query) ? query(option?.query) : query,
+          }
+
+          const res = await callApi({
+            method: '$get',
+            option: newOption,
+            callback,
+          })
+
+          return res
+        }),
+
+        reload: getCallback((callback) => async (query) => {
+          if (!isQueryInitialized) {
             const option = callback.snapshot.getLoadable(optionState).getValue()
             const newOption = {
               ...option,
@@ -147,40 +165,21 @@ export const atomWithAspida = <E extends AspidaEntry>(
               callback,
             })
 
-            return res
-          },
+            isQueryInitialized = true
 
-          async reload(query) {
-            if (!isQueryInitialized) {
-              const option = callback.snapshot
-                .getLoadable(optionState)
-                .getValue()
-              const newOption = {
-                ...option,
-                query: isUpdater(query) ? query(option?.query) : query,
-              }
+            callback.set(optionState, newOption)
+            callback.set(queryState, res)
 
-              const res = await callApi({
-                method: '$get',
-                option: newOption,
-                callback,
-              })
+            return
+          }
 
-              callback.set(optionState, newOption)
-              callback.set(queryState, res)
-
-              isQueryInitialized = true
-
-              return
-            }
-
-            callback.set(optionState, (current) => ({
-              ...current,
-              query: isUpdater(query) ? query(current.query) : query,
-            }))
-          },
-        })
-      ),
+          callback.set(optionState, (current) => ({
+            ...current,
+            query: isUpdater(query) ? query(current.query) : query,
+          }))
+        }),
+      }
+    },
   })
 
   const useAspidaQuery: UseAspidaQuery<E> = (options) => {
@@ -289,7 +288,7 @@ export const atomWithAspida = <E extends AspidaEntry>(
   const useAspidaMutation: UseAspidaMutation<E> = (mutationOption) => {
     const baseGetApi = {
       ...useBaseQueryMutation(),
-      ...useRecoilValue(innerGetApi)(),
+      ...useRecoilValue(innerGetApi),
     }
 
     const getApi = {

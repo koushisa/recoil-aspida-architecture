@@ -1,6 +1,7 @@
 import { Box, Button } from '@chakra-ui/react'
 import React from 'react'
 import { AppSpinnerSuspence } from '@/components/SpinnerSuspence'
+import { SubjectFilter } from '@/features/subject/subject.filter'
 import { SubjectForm } from '@/features/subject/subject.form'
 import { SubjectList } from '@/features/subject/subject.list'
 import { aspida } from '@/lib/aspida'
@@ -17,19 +18,18 @@ export const {
 
     return aspida.api.v1.subjects
   },
-  option({ get }, current) {
+  option({ get }, currentOption) {
     // const query = get(subjectQueryState)
 
     return {
-      query: {},
+      query: currentOption.query,
     }
   },
   // disabled(opts, currentOption) {
-  //   // currentOptions
   //   currentOption.query?.disabled
 
   //   // dependencies
-  //   const disabled = opts.get(/* ~*/)
+  //   const disabled = opts.get(/*~*/)
 
   //   return disabled
   // },
@@ -50,20 +50,23 @@ export const SubjectRoot: React.FC = () => {
   return (
     <>
       <h2>form</h2>
-      <SubjectForm
-        formProps={{
-          defaultValues: { name: '', description: '', disabled: false },
-        }}
-      />
-
-      <Box margin={4} />
-
-      <Button onClick={() => getApi.refetch()}>refetch</Button>
+      <Box padding={4}>
+        <SubjectForm
+          formProps={{
+            defaultValues: { name: '', description: '', disabled: false },
+          }}
+        />
+      </Box>
 
       <h2>list</h2>
-      <AppSpinnerSuspence>
-        <SubjectList />
-      </AppSpinnerSuspence>
+      <Box padding={4}>
+        <SubjectFilter />
+        <Button onClick={() => getApi.refetch()}>refetch</Button>
+
+        <AppSpinnerSuspence>
+          <SubjectList />
+        </AppSpinnerSuspence>
+      </Box>
     </>
   )
 }

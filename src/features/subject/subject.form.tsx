@@ -47,20 +47,38 @@ const SubjectForm: React.FC = () => {
     },
   })
 
+  const [isOptimistic, setIsOptimistic] = useState(false)
+
   return (
     <SubjectFormInput
-      formStatus={<FormStatus formStatus={{ ...postApi }} />}
+      FormStatus={<FormStatus formStatus={{ ...postApi }} />}
+      Actions={
+        <>
+          <Button type='submit'>CREATE</Button>
+          <Checkbox
+            checked={isOptimistic}
+            onChange={(_) => {
+              setIsOptimistic(!isOptimistic)
+            }}>
+            optimistic
+          </Checkbox>
+        </>
+      }
       onValid={(data) => {
         postApi.call({
           body: data,
-          refetchOnSuccess: true,
-
-          // for optimisticUpdate
-          // refetchOnSuccess: false,
-          // rollbackOnError: true,
-          // optimisticData(current) {
-          //   return [...current, { ...data, id: current.length + 1 }]
-          // },
+          ...(isOptimistic
+            ? // for optimisticUpdate
+              {
+                refetchOnSuccess: false,
+                rollbackOnError: true,
+                optimisticData(current) {
+                  return [...current, { ...data, id: current.length + 1 }]
+                },
+              }
+            : {
+                refetchOnSuccess: true,
+              }),
 
           onSuccess(current) {
             console.log({ success: current })
@@ -84,11 +102,12 @@ const SubjectForm: React.FC = () => {
 }
 
 const SubjectFormInput: React.FC<{
-  formStatus: React.ReactNode
+  FormStatus: React.ReactNode
+  Actions: React.ReactNode
   onValid: SubmitHandler<Form>
   onInValid?: SubmitErrorHandler<Form> | undefined
 }> = (props) => {
-  const { onValid, onInValid } = props
+  const { FormStatus, Actions, onValid, onInValid } = props
 
   const form = useSubjectForm()
   const { control } = form
@@ -114,12 +133,8 @@ const SubjectFormInput: React.FC<{
           <Checkbox {...form.register('disabled')}>disabled</Checkbox>
         </div>
 
-        {FormStatus}
-        <br />
-
-        <div>
-          <Button type='submit'>CREATE</Button>
-        </div>
+        <div>{FormStatus}</div>
+        <div>{Actions}</div>
       </>
     </form>
   )
