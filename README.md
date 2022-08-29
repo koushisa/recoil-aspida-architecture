@@ -1,6 +1,6 @@
 PoC of [Recoil](https://github.com/facebookexperimental/Recoil) and [Aspida](https://github.com/aspida/aspida) integration that is managed cache on atomic state tree.
 
-Scrap: https://zenn.dev/link/comments/c762aa47242900
+Zenn's Scrap: https://zenn.dev/link/comments/c762aa47242900
 
 This architecture intended to scalable with Render As Fetch Pattern and co-location based structure.
 
