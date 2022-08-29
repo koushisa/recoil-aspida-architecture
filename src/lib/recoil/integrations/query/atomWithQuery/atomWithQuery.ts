@@ -24,7 +24,6 @@ import { nanoid } from '@/lib/nanoid'
 import { usePrevious } from '@/lib/recoil/integrations/query/atomWithQuery/utils/usePrevious'
 import { callbackAtomFamily } from '@/lib/recoil/shorthands/callbackAtom'
 
-/** Atom to rerun options.get by reset() */
 export function atomWithQuery<T, Mutations extends MutationsInput>(
   options: AtomWithQueryOptions<T, Mutations>
 ): AtomWithQueryResult<T, Mutations> {
@@ -52,7 +51,6 @@ export function atomWithQuery<T, Mutations extends MutationsInput>(
   } as any
 }
 
-/** AtomFamily to rerun options.get by reset() */
 export function atomWithQueryFamily<
   T,
   P extends SerializableParam,
