@@ -9,8 +9,8 @@ Sample code includes some features for explanation.
 - Create, Read, Delete
 - Suspence based loading
 - Skeleton screen
-- API is mocked by msw
-  - https://github.com/koushisa/recoil-aspida-sample/tree/main/src/mocks
+- API is mocked by [msw/data](https://github.com/mswjs/data)
+  - mocks: https://github.com/koushisa/recoil-aspida-sample/tree/main/src/mocks
 
 
 https://user-images.githubusercontent.com/31304738/187138482-103484d3-e9ca-486c-b438-eb0961caab41.mp4
