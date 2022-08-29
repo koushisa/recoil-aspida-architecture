@@ -10,12 +10,12 @@ const {
   query: (id: number) => () => {
     return aspida.api.v1.subjects._subjectId(id).$get()
   },
-  mutations: (param) => {
+  mutations: (id) => {
     return {
       log: (s) => (obj) => {
-        const current = s.snapshot.getLoadable(state(param)).getValue()
+        const current = s.snapshot.getLoadable(state(id)).getValue()
 
-        console.log({ param, current, obj: JSON.stringify(obj) })
+        console.log({ param: id, current, obj: JSON.stringify(obj) })
       },
     }
   },

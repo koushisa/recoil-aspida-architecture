@@ -10,7 +10,7 @@ const {
   query: (id: number) => () => {
     return aspida.api.v1.subjects._subjectId(id).$get()
   },
-  mutations: (param) => {
+  mutations: (id) => {
     return {
       getHoge: (s) => (obj: { id: number; fuga: string }) => {
         JSON.stringify(obj)
