@@ -140,7 +140,19 @@ export const {
 - [Use query via hooks](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.list.tsx#L15-L16)
 - [Filter sample](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.filter.tsx#L15)
 - [Polling](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/student/student.list.tsx#L26-L30)
+- derrived state
+  - `atomWithAspida` returns [RecoilNode, Hooks] tuple. so it is derivable in the same way as usual.
+  ```tsx
+  export const {
+    query: [userListState, useUsers],
+    mutation: [useUsersMutation],
+  } = atomWithAspida(/*~*/)
 
+  const presentationModel = selector({
+    key: "users/presentationModel"
+    get:( {get} ) => createUsersPresentationModel(get(userListState))
+  })
+  ```
 
 ### Mutation
 
