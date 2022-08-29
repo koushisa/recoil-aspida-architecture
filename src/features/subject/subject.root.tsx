@@ -12,27 +12,13 @@ export const {
   mutation: [useSubjectsMutation],
 } = atomWithAspida({
   entry({ get }) {
-    // dependencies
-    // const tenantId = get(tenantIdState)
-    // return aspida.api.v1.tenant._tenantId(tenantId).subjects
-
     return aspida.api.v1.subjects
   },
   option({ get }, currentOption) {
-    // const query = get(subjectQueryState)
-
     return {
       query: currentOption.query,
     }
   },
-  // disabled(opts, currentOption) {
-  //   currentOption.query?.disabled
-
-  //   // dependencies
-  //   const disabled = opts.get(/*~*/)
-
-  //   return disabled
-  // },
 })
 
 /**

@@ -21,10 +21,6 @@ export const {
 } = atomWithQuery({
   key: 'sandboxSubjects',
   query(opts) {
-    // dependencies
-    // const tenantId = get(tenantIdState)
-    // return aspida.api.v1.tenant._tenantId(tenantId).subjects
-
     return aspida.api.v1.subjects.$get()
   },
   mutations: {
