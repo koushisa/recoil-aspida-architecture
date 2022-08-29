@@ -1,28 +1,17 @@
-<h1 align='center'>Vite + React + TypeScript + Eslint + Prettier Template ⚡</h1>
+PoC of [Recoil](https://github.com/facebookexperimental/Recoil) and [Aspida](https://github.com/aspida/aspida) integration that is managed cache on atomic state tree.
 
-Create a new project with Vite, React JS, TypeScript, Eslint, Prettier in just 1 second and you don't need to setup anything.
+Scrap: https://zenn.dev/link/comments/c762aa47242900
 
-#### **Vercel Deploy: https://vite-react-ts-eslint-prettier.vercel.app**
+This architecture intended to scalable with Render As Fetch Pattern and co-location based structure.
 
-![image](https://user-images.githubusercontent.com/70432453/170648662-2ff424b9-74e9-4754-a04d-512fe1496a3b.png)
+Sample code includes some features for explanation.
 
-## **Some Features 📋**
+- Create, Read, Delete
+- API is mocked by msw
+  - https://github.com/koushisa/recoil-aspida-sample/tree/main/src/mocks
 
-Alias Import
 
-![image](https://user-images.githubusercontent.com/70432453/170644457-ede03cca-44e9-4543-94d3-412c9d317063.png)
-
-Hook Warning
-
-![image](https://user-images.githubusercontent.com/70432453/170638708-23a20ffd-156e-494a-84be-b1e1cfdb5c93.png)
-
-Prettier Warning
-
-![image](https://user-images.githubusercontent.com/70432453/170639043-24423ed1-73cc-4730-b270-2acea1ae0c74.png)
-
-Etc...
-
-## **Using 📦**
+https://user-images.githubusercontent.com/31304738/187138482-103484d3-e9ca-486c-b438-eb0961caab41.mp4
 
 1. Clone Template
 
@@ -42,40 +31,143 @@ yarn install
 yarn dev
 ```
 
-4. If you using git, delete the existing folder .git after cloning (open `git bash` or other terminal)
+## Features
 
-```
-rm -rf .git
+- Declaratively construct a dependency tree
+- Encapsulate the management of server state, cache
+- Simple and type-safe API call like RPC
+
+
+```tsx
+export const {
+  query: [subjectListState, useSubjects],
+  mutation: [useSubjectsMutation],
+} = atomWithAspida({
+  // you can pass any aspida entry
+  entry() {
+    return aspida.api.v1.subjects
+  },
+  option(_, currentOption) {
+    return {
+      query: currentOption.query,
+    }
+  },
+})
+
+// Loadable<Subject[]>
+const subjects = useSubjects()
+
+const { getApi, postApi } = useSubjectsMutation()
+
+// getApi is abstraction of aspida.api.v1.subjects.$get()
+const { prefetch, refetch, reload } = getApi
+
+getApi.prefetch()
+getApi.refetch()
+getApi.reload({ name: 'foo' }) // declarative api call. it will update the `subjectListState`.
+const response = getApi.call({ name: 'foo' }) // imperative api call. it won't update state.
+
+// postApi is abstraction of aspida.api.v1.subjects.$post()
+const { error, pending, success } = postApi
+
+// call post
+postApi.call({
+  body: { name: 'newName' },
+  // automatically refetch
+  refetchOnSuccess: true,
+
+  // options for optimistic update
+  // refetchOnSuccess: false,
+  // rollbackOnError: true,
+  // optimisticData(current) {
+  //   return [...current, { ...data, id: current.length + 1 }]
+  // },
+})
+
+// each endpoint from aspida entry has same interface
+const { call, error, pending, success } = patchApi
 ```
 
-## **Options ✍️**
+## Recipes
 
-1. Check lint
+You can access any Recoil nodes in atomWithAspida's callback.
 
-```
-yarn lint
+### Construct dependency 
+
+```tsx
+export const {
+  query: [userListState, useUsers],
+  mutation: [useUsersMutation],
+} = atomWithAspida({
+ // the `get` is `GetRecoilValue`
+ entry({ get }) {
+    const tenantId = get(tenantIdState)
+
+    return aspida.api.v1.tenant._tenantId(tenantId).users
+  },
+  // same here.
+  option({ get }, currentOption) {
+    const user = get(loginUserState)
+  
+    return {
+      query: { 
+        admin: user.isAdmin,
+        ...currentOption.query
+      },
+    }
+  },
+})
 ```
 
-2. Fix lint
+### Conditional Fetching
 
-```
-yarn lint:fix
-```
+```tsx
+export const {
+  query: [userListState, useUsers],
+  mutation: [useUsersMutation],
+} = atomWithAspida({
+  /*~*/
+  disabled(opts, currentOption) {
+    const disabled = opts.get(someConditionState)
 
-3. Check prettier
-
-```
-yarn prettier
-```
-
-4. Fix prettier
-
-```
-yarn prettier:fix
+    return disabled
+  },
+})
 ```
 
-5. Fix lint and prettier
+### Manages Server State
 
-```
-yarn format
-```
+- [Use query via hooks](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.list.tsx#L15-L16)
+- [Filter sample](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.filter.tsx#L15)
+- [Polling](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/student/student.list.tsx#L26-L30)
+
+
+### Mutation
+
+- [Mutation sample](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.form.tsx#L39-L48)
+- [Optimistic update sample](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.form.tsx#L68-L95)
+
+### props-based api call
+
+- use atomWithFamily
+  - [api](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.item.tsx#L9-L27)
+  - [component](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.item.tsx#L51-L54)
+- `atomWithAspidaFamily` will coming soon in this use cace
+  - so, this [callDelete function](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.item.tsx#L18-L24) won't need anymore.
+
+## Utility 
+
+### atomWithAspida
+
+- interface: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.root.tsx#L10-L13
+- src: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/lib/recoil/integrations/aspida/atomWithAspida.ts#L43
+
+### atomWithQuery
+
+- interface: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/sandbox/sandbox.root.tsx#L18-L21
+- src: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/lib/recoil/integrations/query/atomWithQuery/atomWithQuery.ts#L27
+
+### atomWithQueryFamily
+
+- interface: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.item.tsx#L9-L12
+- src: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/lib/recoil/integrations/query/atomWithQuery/atomWithQuery.ts#L54
