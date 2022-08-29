@@ -2,7 +2,7 @@ PoC of [Recoil](https://github.com/facebookexperimental/Recoil) and [Aspida](htt
 
 Zenn's Scrap: https://zenn.dev/link/comments/c762aa47242900
 
-This architecture intended to scalable with Render As Fetch Pattern and co-location based structure.
+This architecture is opinionated, but intended to scalable with Render As Fetch Pattern and co-location based structure.
 
 Sample code includes some features for explanation.
 
