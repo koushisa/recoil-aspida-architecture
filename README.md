@@ -1,4 +1,4 @@
-PoC of [Recoil](https://github.com/facebookexperimental/Recoil) and [Aspida](https://github.com/aspida/aspida) integration that is managed cache on atomic state tree.
+PoC of [Recoil](https://github.com/facebookexperimental/Recoil) and [Aspida](https://github.com/aspida/aspida) integration that is managing (ServerState | cache) in atomic state tree.
 
 Zenn's Scrap: https://zenn.dev/link/comments/c762aa47242900
 
