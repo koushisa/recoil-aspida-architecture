@@ -13,18 +13,18 @@ export type UsePromiseReturn<T, Args extends AnyArgs> = {
   pending: boolean
   success: boolean
   error: Error | undefined
-  call: (args: Args) => Promise<T>
+  call: (args?: Args) => Promise<T>
 }
 
 export const usePromise = <T, Args extends AnyArgs>(
-  promise: (args: Args) => Promise<T>,
+  promise: (args?: Args) => Promise<T>,
   options?: UsePromiseOptions
 ): UsePromiseReturn<T, Args> => {
   const [pending, setPending] = useState(false)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState<Error>()
 
-  const call = (args: Args) => {
+  const call = (args?: Args) => {
     setPending(true)
     setSuccess(false)
     setError(undefined)
