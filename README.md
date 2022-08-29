@@ -59,7 +59,7 @@ export const {
 // Loadable<Subject[]>
 const subjects = useSubjects()
 
-const { getApi, postApi } = useSubjectsMutation()
+const { getApi, postApi, patchApi, ...etc } = useSubjectsMutation()
 
 // getApi is abstraction of aspida.api.v1.subjects.$get()
 const { prefetch, refetch, reload } = getApi
