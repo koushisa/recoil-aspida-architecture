@@ -1,19 +1,26 @@
-import { AccordionPanel } from '@chakra-ui/react'
+import { AccordionPanel, Button } from '@chakra-ui/react'
+import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { TextSuspence } from '@/components/TextSuspence'
+import { subjectListState } from '@/features/subject/subject.root'
 import { aspida } from '@/lib/aspida'
+import { usePromise } from '@/lib/recoil/integrations/aspida/utils/usePromise'
 import { atomWithQueryFamily } from '@/lib/recoil/integrations/query/atomWithQuery/atomWithQuery'
 
 const {
-  query: [state, useSubject],
-  mutation: [_, __],
+  query: [_, useSubject],
+  mutation: [__, useSubjectMutation],
 } = atomWithQueryFamily({
   query: (id: number) => () => {
     return aspida.api.v1.subjects._subjectId(id).$get()
   },
   mutations: (id) => {
     return {
-      getHoge: (s) => (obj: { id: number; fuga: string }) => {
-        JSON.stringify(obj)
+      callDelete: (cb) => async () => {
+        await aspida.api.v1.subjects._subjectId(id).$delete({
+          body: { id },
+        })
+
+        cb.reset(subjectListState)
       },
     }
   },
@@ -46,6 +53,9 @@ const Comp: React.FC<Props> = (props) => {
     keepPrevious: false,
   })
 
+  const { refetch, callDelete } = useSubjectMutation(subjectId)
+  const deleteApi = usePromise(callDelete)
+
   if (subject.state === 'hasError') {
     return (
       <AccordionPanel height={BODY_HEIGHT}>
@@ -58,6 +68,9 @@ const Comp: React.FC<Props> = (props) => {
 
   return (
     <AccordionPanel height={BODY_HEIGHT}>
+      <FormStatus formStatus={deleteApi} />
+      <Button onClick={refetch}>refetch</Button>
+      <Button onClick={() => deleteApi.call()}>delete</Button>
       <pre>{subject.getValue().description}</pre>
     </AccordionPanel>
   )

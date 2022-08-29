@@ -1,6 +1,9 @@
 import { AccordionPanel, Button } from '@chakra-ui/react'
+import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { TextSuspence } from '@/components/TextSuspence'
+import { sandboxSubjectsState } from '@/features/sandbox/sandbox.root'
 import { aspida } from '@/lib/aspida'
+import { usePromise } from '@/lib/recoil/integrations/aspida/utils/usePromise'
 import { atomWithQueryFamily } from '@/lib/recoil/integrations/query/atomWithQuery/atomWithQuery'
 
 const {
@@ -16,6 +19,13 @@ const {
         const current = s.snapshot.getLoadable(state(id)).getValue()
 
         console.log({ param: id, current, obj: JSON.stringify(obj) })
+      },
+      callDelete: (cb) => async () => {
+        await aspida.api.v1.subjects._subjectId(id).$delete({
+          body: { id },
+        })
+
+        cb.reset(sandboxSubjectsState)
       },
     }
   },
@@ -48,7 +58,8 @@ const Comp: React.FC<Props> = (props) => {
     keepPrevious: false,
   })
 
-  const { refetch, log } = useSandboxSubjectItemMutation(subjectId)
+  const { refetch, log, callDelete } = useSandboxSubjectItemMutation(subjectId)
+  const deleteApi = usePromise(callDelete)
 
   if (subject.state === 'hasError') {
     return (
@@ -62,7 +73,9 @@ const Comp: React.FC<Props> = (props) => {
 
   return (
     <AccordionPanel height={BODY_HEIGHT}>
+      <FormStatus formStatus={deleteApi} />
       <Button onClick={refetch}>refetch</Button>
+      <Button onClick={() => deleteApi.call()}>delete</Button>
       <Button
         onClick={() =>
           log({

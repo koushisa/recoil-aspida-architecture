@@ -8,7 +8,7 @@ import { aspida } from '@/lib/aspida'
 import { atomWithAspida } from '@/lib/recoil/integrations/aspida/atomWithAspida'
 
 export const {
-  query: [_, useSubjects],
+  query: [subjectListState, useSubjects],
   mutation: [useSubjectsMutation],
 } = atomWithAspida({
   entry({ get }) {
