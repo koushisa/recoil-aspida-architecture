@@ -1,14 +1,8 @@
 import { Button, Checkbox } from '@chakra-ui/react'
-import {
-  SubmitErrorHandler,
-  SubmitHandler,
-  FormProvider,
-  useForm,
-  UseFormProps,
-  useFormContext,
-} from 'react-hook-form'
 import type React from 'react'
+import type { SubmitErrorHandler, SubmitHandler } from 'react-hook-form'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
+import { createRHFContext } from '@/components/Form/shared/BaseInput/createRHFContext'
 import { useSandboxSubjectsMutation } from '@/features/sandbox/sandbox.root'
 
 type Form = {
@@ -17,22 +11,9 @@ type Form = {
   disabled: boolean
 }
 
-type SubjectFormProps = {
-  formProps: UseFormProps<Form, any>
-}
+const [useSubjectForm, withFormProvider] = createRHFContext<Form>()
 
-const useSubjectForm = () => useFormContext<Form>()
-const Wrapper: React.FC<SubjectFormProps> = ({ formProps }) => {
-  const form = useForm<Form>(formProps)
-
-  return (
-    <FormProvider {...form}>
-      <SubjectForm />
-    </FormProvider>
-  )
-}
-
-const SubjectForm: React.FC = () => {
+export const SandboxSubjectForm = withFormProvider(() => {
   const { post: postApi, log } = useSandboxSubjectsMutation()
   const form = useSubjectForm()
   const [isOptimistic, setIsOptimistic] = useState(false)
@@ -90,7 +71,7 @@ const SubjectForm: React.FC = () => {
       }}
     />
   )
-}
+})
 
 const SubjectFormInput: React.FC<{
   FormStatus: React.ReactNode
@@ -130,5 +111,3 @@ const SubjectFormInput: React.FC<{
     </form>
   )
 }
-
-export { Wrapper as SandBoxSubjectForm }

@@ -4,7 +4,7 @@ import type { Subject } from 'api/api/v1/subjects'
 import { AppSpinnerSuspence } from '@/components/SpinnerSuspence'
 import { mutate, SubjectsMutationOption } from '@/features/sandbox/mutation'
 import { SandboxSubjectFilter } from '@/features/sandbox/sandbox.filter'
-import { SandBoxSubjectForm } from '@/features/sandbox/sandbox.form'
+import { SandboxSubjectForm } from '@/features/sandbox/sandbox.form'
 import { SandboxSubjectList } from '@/features/sandbox/sandbox.list'
 import { aspida } from '@/lib/aspida'
 import { atomWithQuery } from '@/lib/recoil/integrations/query/atomWithQuery/atomWithQuery'
@@ -69,7 +69,7 @@ export const SandboxSubjectRoot: React.FC = () => {
     <>
       <h2>sandbox form</h2>
       <Box padding={4}>
-        <SandBoxSubjectForm
+        <SandboxSubjectForm
           formProps={{
             defaultValues: { name: '', description: '', disabled: false },
           }}
