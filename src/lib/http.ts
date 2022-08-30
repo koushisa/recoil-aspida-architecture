@@ -6,9 +6,9 @@ export const http = axios.create({
   baseURL: HOST,
 })
 
-export function delay(time: number) {
-  return new Promise((resolv) => {
-    setTimeout(resolv, time)
+function delay(time: number) {
+  return new Promise<void>((resolve) => {
+    setTimeout(resolve, time)
   })
 }
 
