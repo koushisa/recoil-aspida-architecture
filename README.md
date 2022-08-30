@@ -9,8 +9,10 @@ Sample code includes some features for explanation.
 - Create, Read, Delete (Update is coming soon)
 - Suspence based loading
 - Skeleton screen
+- Form is created by [react-hook-form](https://github.com/react-hook-form/react-hook-form)
+  - wrapper: https://github.com/koushisa/recoil-aspida-sample/tree/main/src/components/Form/shared/BaseInput
 - API server is mocked by [msw/data](https://github.com/mswjs/data)
-  - mocks: https://github.com/koushisa/recoil-aspida-sample/tree/main/src/mocks
+  - wrapper: https://github.com/koushisa/recoil-aspida-sample/tree/main/src/mocks
 
 
 https://user-images.githubusercontent.com/31304738/187138482-103484d3-e9ca-486c-b438-eb0961caab41.mp4
