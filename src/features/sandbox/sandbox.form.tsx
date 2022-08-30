@@ -50,19 +50,9 @@ export const SandboxSubjectForm = withFormProvider(() => {
             : {
                 refetchOnSuccess: true,
               }),
-
           onSuccess(current) {
             console.log({ success: current })
             form.reset()
-          },
-          onStart(current) {
-            console.log({ start: current })
-          },
-          onError(current) {
-            console.log({ err: current })
-          },
-          onEnd(current) {
-            console.log({ end: current })
           },
         })
       }}

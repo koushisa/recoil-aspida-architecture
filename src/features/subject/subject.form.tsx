@@ -60,19 +60,6 @@ export const SubjectForm = withFormProvider(() => {
             : {
                 refetchOnSuccess: true,
               }),
-
-          onSuccess(current) {
-            console.log({ success: current })
-          },
-          onStart(current) {
-            console.log({ start: current })
-          },
-          onError(current) {
-            console.log({ err: current })
-          },
-          onEnd(current) {
-            console.log({ end: current })
-          },
         })
       }}
       onInValid={(err, evt) => {

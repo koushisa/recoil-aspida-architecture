@@ -1,5 +1,8 @@
-import { Checkbox, Input } from '@chakra-ui/react'
+import { Button, Checkbox } from '@chakra-ui/react'
+import type { SubmitErrorHandler, SubmitHandler } from 'react-hook-form'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
+import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
+import { createRHFContext } from '@/components/Form/shared/BaseInput'
 
 type Form = {
   name: string
@@ -7,84 +10,96 @@ type Form = {
   disabled: boolean
 }
 
-type SubjectFormProps = {
+type AntiSubjectFormProps = {
   formStatus: FormStatus
-  onCreate: (data: Form) => void
-  onCreateOptimistic: (data: Form) => void
+  onCreate: (data: Form) => Promise<void>
+  onCreateOptimistic: (data: Form) => Promise<void>
 }
 
-export const AntiSubjectForm: React.FC<SubjectFormProps> = ({
-  formStatus,
-  onCreate,
-  onCreateOptimistic,
-}) => {
-  const handleCreate = () => {
-    onCreate({
-      name: 'test name',
-      description: 'test desc',
-      disabled: true,
-    })
+const [useSubjectForm, withFormProvider] = createRHFContext<
+  Form,
+  AntiSubjectFormProps
+>()
+
+export const AntiSubjectForm = withFormProvider<AntiSubjectFormProps>(
+  ({ formStatus, onCreate, onCreateOptimistic }) => {
+    const [isOptimistic, setIsOptimistic] = useState(false)
+
+    const form = useSubjectForm()
+
+    return (
+      <div>
+        <AntiSubjectFormInput
+          FormStatus={<FormStatus formStatus={formStatus} />}
+          Actions={
+            <>
+              <Button type='submit'>CREATE</Button>
+              <Checkbox
+                checked={isOptimistic}
+                onChange={(_) => {
+                  setIsOptimistic(!isOptimistic)
+                }}>
+                optimistic
+              </Checkbox>
+            </>
+          }
+          onValid={(data) => {
+            try {
+              if (isOptimistic) {
+                onCreateOptimistic(data)
+              } else {
+                onCreate(data)
+              }
+            } catch (error) {
+              console.log({ error })
+            } finally {
+              form.reset()
+            }
+          }}
+          onInValid={(err, evt) => {
+            console.log({ err, evt })
+          }}
+        />
+      </div>
+    )
   }
+)
 
-  const handleCreateTemporary = () => {
-    onCreateOptimistic({
-      name: 'hoge',
-      description: 'hoge',
-      disabled: false,
-    })
-  }
-
-  return (
-    <div>
-      <FormStatus formStatus={formStatus} />
-
-      <Form
-        handleCreate={handleCreate}
-        handleCreateOptimistic={handleCreateTemporary}
-      />
-    </div>
-  )
-}
-
-const Form: React.FC<{
-  handleCreate: (data: Form) => void
-  handleCreateOptimistic: (data: Form) => void
+const AntiSubjectFormInput: React.FC<{
+  FormStatus: React.ReactNode
+  Actions: React.ReactNode
+  onValid: SubmitHandler<Form>
+  onInValid?: SubmitErrorHandler<Form> | undefined
 }> = (props) => {
-  const { handleCreate, handleCreateOptimistic } = props
+  const { FormStatus, Actions, onValid, onInValid } = props
 
-  const [name, setName] = useState('')
-  const [description, setDescription] = useState('')
-  const [disabled, setDisabled] = useState(false)
+  const form = useSubjectForm()
+  const { control } = form
 
   return (
-    <form>
-      <Input
-        placeholder='name'
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-      />
-      <br />
-      <Input
-        placeholder='description'
-        value={description}
-        onChange={(e) => setDescription(e.target.value)}
-      />
-      <br />
-      <Checkbox
-        checked={disabled}
-        onChange={(e) => setDisabled(e.target.checked)}>
-        disabled
-      </Checkbox>
-      <br />
-      <button
-        type='button'
-        onClick={() => handleCreate({ name, description, disabled })}>
-        CREATE
-      </button>
-      <br />
-      <button type='button' onClick={() => handleCreateOptimistic}>
-        CREATE Optimistic
-      </button>
+    <form onSubmit={form.handleSubmit(onValid, onInValid)}>
+      <>
+        <div>
+          <ControlledInputText
+            label='name'
+            placeholder='name'
+            controllerProps={{ control, name: 'name' }}
+          />
+        </div>
+        <div>
+          <ControlledInputText
+            label='description'
+            placeholder='description'
+            controllerProps={{ control, name: 'description' }}
+          />
+        </div>
+        <div>
+          <Checkbox {...form.register('disabled')}>disabled</Checkbox>
+        </div>
+
+        <div>{FormStatus}</div>
+        <div>{Actions}</div>
+      </>
     </form>
   )
 }

@@ -1,4 +1,4 @@
-import { Box } from '@chakra-ui/react'
+import { Box, Button } from '@chakra-ui/react'
 import React from 'react'
 import { useRecoilCallback } from 'recoil'
 import type { Subject } from 'api/api/v1/subjects'
@@ -35,19 +35,17 @@ export const AntiSubjectRoot: React.FC = () => {
 
   const { getApi, postApi } = useAntiSubjectsMutation()
 
-  const createSubject = (data: Omit<Subject, 'id'>) => {
-    postApi
-      .call({
-        body: data,
-      })
-      .then(() => {
-        getApi.refetch()
-      })
+  const createSubject = async (data: Omit<Subject, 'id'>) => {
+    await postApi.call({
+      body: data,
+    })
+
+    getApi.refetch()
   }
 
   const createOptimisticSubject = useRecoilCallback(
     ({ set }) =>
-      (data: Omit<Subject, 'id'>) => {
+      async (data: Omit<Subject, 'id'>) => {
         set(antiSubjectState, (cur) => [
           ...cur,
           {
@@ -76,6 +74,7 @@ export const AntiSubjectRoot: React.FC = () => {
 
       <h2>anti list</h2>
       <Box padding={4}>
+        <Button onClick={() => getApi.refetch()}>refetch</Button>
         <AppSpinnerSuspence>
           <AntiSubjectList subjects={subjects.getValue()} />
         </AppSpinnerSuspence>
