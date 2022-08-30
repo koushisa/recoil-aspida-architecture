@@ -6,7 +6,7 @@ This architecture is opinionated, but intended to scalable with Render As Fetch 
 
 Sample code includes some features for explanation.
 
-- Create, Read, Delete (Update will coming soon)
+- Create, Read, Delete (Update is coming soon)
 - Suspence based loading
 - Skeleton screen
 - API server is mocked by [msw/data](https://github.com/mswjs/data)
@@ -166,7 +166,7 @@ export const {
 - use atomWithFamily
   - [api](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.item.tsx#L9-L27)
   - [component](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.item.tsx#L51-L54)
-- `atomWithAspidaFamily` will coming soon in this use cace
+- `atomWithAspidaFamily` is coming soon in this use cace
   - so, this [callDelete function](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.item.tsx#L18-L24) won't need anymore.
 
 ## Utility 
