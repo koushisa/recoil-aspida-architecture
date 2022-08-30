@@ -8,16 +8,22 @@ import {
 
 /** React Hook Form Utility for React.Context*/
 export const createRHFContext = <
-  TFieldValues extends FieldValues = FieldValues,
+  TFieldValues extends FieldValues,
+  ExtendedProps extends {} = {},
   TContext = any
->() => {
+>(
+  outerFormProps?: UseFormProps<TFieldValues, TContext>
+) => {
   type ProviderProps = {
     formProps?: UseFormProps<TFieldValues, TContext>
     children?: React.ReactNode
   }
 
-  const Provider: React.FC<ProviderProps> = ({ formProps, children }) => {
-    const form = useReactHookForm(formProps)
+  const Provider: React.FC<ProviderProps> = ({
+    formProps: innerFormProps,
+    children,
+  }) => {
+    const form = useReactHookForm({ ...outerFormProps, ...innerFormProps })
 
     return <FormProvider {...form}>{children}</FormProvider>
   }
@@ -27,7 +33,7 @@ export const createRHFContext = <
   const withProvider = <OriginalProps extends {}>(
     WrappedComponent: React.ComponentType<OriginalProps>
   ) => {
-    type ResultProps = OriginalProps & ProviderProps
+    type ResultProps = OriginalProps & ProviderProps & ExtendedProps
 
     const hoc = (props: ResultProps) => {
       const { formProps } = props
