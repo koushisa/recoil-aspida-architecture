@@ -6,7 +6,7 @@ This architecture is opinionated, but intended to scalable with Render As Fetch 
 
 Sample code includes some features for explanation.
 
-- Create, Read, Delete
+- Create, Read, Delete (Update will coming soon)
 - Suspence based loading
 - Skeleton screen
 - API server is mocked by [msw/data](https://github.com/mswjs/data)
