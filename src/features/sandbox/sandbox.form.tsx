@@ -2,7 +2,7 @@ import { Button, Checkbox } from '@chakra-ui/react'
 import type React from 'react'
 import type { SubmitErrorHandler, SubmitHandler } from 'react-hook-form'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
-import { createRHFContext } from '@/components/Form/shared/BaseInput/createRHFContext'
+import { createRHFContext } from '@/components/Form/shared/BaseInput'
 import { useSandboxSubjectsMutation } from '@/features/sandbox/sandbox.root'
 
 type Form = {

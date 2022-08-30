@@ -6,14 +6,6 @@ import {
   useForm as useReactHookForm,
 } from 'react-hook-form'
 
-export interface EnhancedProps<
-  TFieldValues extends FieldValues = FieldValues,
-  TContext = any
-> {
-  formProps?: UseFormProps<TFieldValues, TContext>
-  children?: React.ReactNode
-}
-
 /** React Hook Form Utility for React.Context*/
 export const createRHFContext = <
   TFieldValues extends FieldValues = FieldValues,

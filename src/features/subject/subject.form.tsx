@@ -3,7 +3,7 @@ import type React from 'react'
 import type { SubmitErrorHandler, SubmitHandler } from 'react-hook-form'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
-import { createRHFContext } from '@/components/Form/shared/BaseInput/createRHFContext'
+import { createRHFContext } from '@/components/Form/shared/BaseInput'
 import { useSubjectsMutation } from '@/features/subject/subject.root'
 
 type Form = {

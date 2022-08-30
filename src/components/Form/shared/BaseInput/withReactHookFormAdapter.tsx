@@ -36,7 +36,7 @@ export type BaseInputProps<T> = RHFAdapterProps<T> & {
   placeholder?: string
 }
 
-export interface EnhancedProps<T = FieldValues> {
+type EnhancedProps<T = FieldValues> = {
   controllerProps: UseControllerProps<T, FieldPath<T>>
 }
 
