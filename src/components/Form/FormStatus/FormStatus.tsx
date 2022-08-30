@@ -23,8 +23,4 @@ const Success: React.FC = () => <p>success!!!</p>
 
 const Error: React.FC<{
   error: Error
-}> = (props) => (
-  <p>
-    <ErrorDump error={props.error} />
-  </p>
-)
+}> = (props) => <ErrorDump error={props.error} />
