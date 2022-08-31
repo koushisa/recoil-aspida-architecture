@@ -2,26 +2,36 @@ import { Button } from '@chakra-ui/react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
-import { useSubjectsMutation } from '@/features/subject/subject.root'
+import {
+  AntiSubjectFilterForm,
+  useAntiSubjectFilterForm,
+} from '@/features/subject__anti/anti.root'
 
-type Filter = {
-  name: string | undefined
+const useReload = () => {
+  const form = useAntiSubjectFilterForm()
+
+  // TODO: これだとエラー出る???
+  // あと、rootに集約しないパターンで実装したらどうなるか試してみる
+  const reload = async (filter: AntiSubjectFilterForm) => {
+    form.setValue('name', filter.name)
+  }
+
+  return reload
 }
 
-const defaultValues: Filter = {
-  name: '',
-}
-
-export const AntixSubjectFilter: React.FC = () => {
-  const form = useForm<Filter>({
-    defaultValues,
+export const AntiSubjectFilter: React.FC = () => {
+  const form = useForm({
+    defaultValues: {
+      name: '',
+    },
   })
+
   const { control, handleSubmit } = form
 
-  const { getApi } = useSubjectsMutation()
+  const reload = useReload()
 
   const onClickFilter = handleSubmit((data) => {
-    getApi.reload(data)
+    reload(data)
   })
 
   return (

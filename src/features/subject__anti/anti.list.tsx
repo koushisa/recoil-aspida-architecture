@@ -5,16 +5,33 @@ import {
   AccordionItem,
   Badge,
   Box,
+  Button,
 } from '@chakra-ui/react'
 import React from 'react'
 import type { Subject } from 'api/api/v1/subjects'
-import { SubjectItem } from '@/features/subject/subject.item'
+import { ErrorDump } from '@/components/ErrorDump/ErrorDump'
+import { AppSpinner } from '@/components/Spinner/Spinner'
+import { AntiSubjectQuery } from '@/features/subject__anti/anti.hooks'
+import { AntiSubjectItem } from '@/features/subject__anti/anti.item'
 
-type Props = {
-  subjects: Subject[]
+export const AntiSubjectList: React.FC = () => {
+  const { data = [], isLoading, error, refetch } = AntiSubjectQuery.useList()
+
+  if (isLoading) return <AppSpinner />
+  if (error) return <ErrorDump error={error} />
+
+  return (
+    <>
+      {/* refetchがuseQueryに紐付いている */}
+      <Button onClick={() => refetch()}>refetch</Button>
+      <List subjects={data} />
+    </>
+  )
 }
 
-export const AntiSubjectList: React.FC<Props> = ({ subjects }) => {
+const List: React.FC<{
+  subjects: Subject[]
+}> = ({ subjects }) => {
   return (
     <>
       {subjects.map((sub) => (
@@ -36,7 +53,7 @@ export const AntiSubjectList: React.FC<Props> = ({ subjects }) => {
                   </AccordionButton>
                 </h2>
 
-                {isExpanded ? <SubjectItem subjectId={sub.id} /> : null}
+                {isExpanded ? <AntiSubjectItem subjectId={sub.id} /> : null}
               </>
             )}
           </AccordionItem>

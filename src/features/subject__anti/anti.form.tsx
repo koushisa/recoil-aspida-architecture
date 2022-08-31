@@ -3,6 +3,7 @@ import type { SubmitErrorHandler, SubmitHandler } from 'react-hook-form'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
 import { createRHFContext } from '@/components/Form/shared/BaseInput'
+import { AntiSubjectQuery } from '@/features/subject__anti/anti.hooks'
 
 type Form = {
   name: string
@@ -10,60 +11,73 @@ type Form = {
   disabled: boolean
 }
 
-type AntiSubjectFormProps = {
-  formStatus: FormStatus
-  onCreate: (data: Form) => Promise<void>
-  onCreateOptimistic: (data: Form) => Promise<void>
-}
+const [useSubjectForm, withFormProvider] = createRHFContext<Form>()
 
-const [useSubjectForm, withFormProvider] = createRHFContext<
-  Form,
-  AntiSubjectFormProps
->()
+export const AntiSubjectForm = withFormProvider(() => {
+  const form = useSubjectForm()
 
-export const AntiSubjectForm = withFormProvider<AntiSubjectFormProps>(
-  ({ formStatus, onCreate, onCreateOptimistic }) => {
-    const [isOptimistic, setIsOptimistic] = useState(false)
+  const { post, optimisticPost } = AntiSubjectQuery.useMutation({
+    onSuccess() {
+      alert('post success')
+      form.reset()
+    },
+    onError(e) {
+      alert('post error ')
+      console.log({ e })
+    },
+  })
 
-    const form = useSubjectForm()
+  const [isOptimistic, setIsOptimistic] = useState(false)
 
-    return (
-      <div>
-        <AntiSubjectFormInput
-          FormStatus={<FormStatus formStatus={formStatus} />}
-          Actions={
-            <>
-              <Button type='submit'>CREATE</Button>
-              <Checkbox
-                checked={isOptimistic}
-                onChange={(_) => {
-                  setIsOptimistic(!isOptimistic)
-                }}>
-                optimistic
-              </Checkbox>
-            </>
+  return (
+    <AntiSubjectFormInput
+      FormStatus={
+        <FormStatus
+          formStatus={
+            isOptimistic
+              ? {
+                  success: optimisticPost.isSuccess,
+                  error: optimisticPost.error,
+                  pending: optimisticPost.isLoading,
+                }
+              : {
+                  success: post.isSuccess,
+                  error: post.error,
+                  pending: post.isLoading,
+                }
           }
-          onValid={(data) => {
-            try {
-              if (isOptimistic) {
-                onCreateOptimistic(data)
-              } else {
-                onCreate(data)
-              }
-            } catch (error) {
-              console.log({ error })
-            } finally {
-              form.reset()
-            }
-          }}
-          onInValid={(err, evt) => {
-            console.log({ err, evt })
-          }}
         />
-      </div>
-    )
-  }
-)
+      }
+      Actions={
+        <>
+          <Button type='submit'>CREATE</Button>
+          <Checkbox
+            checked={isOptimistic}
+            onChange={(_) => {
+              setIsOptimistic((v) => !v)
+            }}>
+            optimistic
+          </Checkbox>
+        </>
+      }
+      onValid={(data) => {
+        if (isOptimistic) {
+          // 動かない
+          optimisticPost.mutate({
+            body: data,
+          })
+        } else {
+          post.mutate({
+            body: data,
+          })
+        }
+      }}
+      onInValid={(err, evt) => {
+        console.log({ err, evt })
+      }}
+    />
+  )
+})
 
 const AntiSubjectFormInput: React.FC<{
   FormStatus: React.ReactNode

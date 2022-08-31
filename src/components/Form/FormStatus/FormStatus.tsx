@@ -3,7 +3,7 @@ import { ErrorDump } from '@/components/ErrorDump/ErrorDump'
 export type FormStatus = {
   pending: boolean
   success: boolean
-  error: Error | undefined
+  error: unknown
 }
 
 export const FormStatus: React.FC<{ formStatus: FormStatus }> = ({
@@ -22,5 +22,5 @@ const Pending: React.FC = () => <p>pending...</p>
 const Success: React.FC = () => <p>success!!!</p>
 
 const Error: React.FC<{
-  error: Error
+  error: unknown
 }> = (props) => <ErrorDump error={props.error} />

@@ -1,4 +1,4 @@
-import { Box, Button } from '@chakra-ui/react'
+import { Box } from '@chakra-ui/react'
 import React from 'react'
 import { AppSpinnerSuspence } from '@/components/SpinnerSuspence'
 import { SubjectFilter } from '@/features/subject/subject.filter'
@@ -47,7 +47,6 @@ export const SubjectRoot: React.FC = () => {
       <h2>list</h2>
       <Box padding={4}>
         <SubjectFilter />
-        <Button onClick={() => getApi.refetch()}>refetch</Button>
 
         <AppSpinnerSuspence>
           <SubjectList />

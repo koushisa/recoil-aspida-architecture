@@ -1,20 +1,27 @@
-import { AccordionPanel } from '@chakra-ui/react'
-import type { Subject } from 'api/api/v1/subjects'
+import { AccordionPanel, Button } from '@chakra-ui/react'
+import {
+  QueryFunctionContext,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query'
+import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { TextSuspence } from '@/components/TextSuspence'
+import { AntiSubjectQuery } from '@/features/subject__anti/anti.hooks'
+
 import { aspida } from '@/lib/aspida'
-import { atomWithQueryFamily } from '@/lib/recoil/integrations/query/atomWithQuery/atomWithQuery'
 
 type Props = {
-  subject: Subject
+  subjectId: number
 }
 
-const {
-  query: [_, useSubject],
-} = atomWithQueryFamily({
-  query: (id: number) => () => {
-    return aspida.api.v1.subjects._subjectId(id).$get()
-  },
-})
+const fetchSubjectItem = async ({
+  queryKey: [, subjectId],
+}: QueryFunctionContext<
+  ReturnType<typeof AntiSubjectQuery['Keys']['item']>
+>) => {
+  return await aspida.api.v1.subjects._subjectId(subjectId).$get()
+}
 
 const BODY_HEIGHT = 120
 
@@ -32,20 +39,36 @@ export const AntiSubjectItem: React.FC<Props> = (props) => {
 }
 
 const Comp: React.FC<Props> = (props) => {
-  const {
-    subject: { id },
-  } = props
+  const { subjectId } = props
 
-  const subject = useSubject({
-    param: id,
-    keepPrevious: false,
-  })
+  const queryClient = useQueryClient()
 
-  if (subject.state === 'hasError') {
+  const query = useQuery(
+    AntiSubjectQuery.Keys.item(subjectId),
+    fetchSubjectItem,
+    {
+      suspense: true,
+    }
+  )
+
+  const getListKey = AntiSubjectQuery.useListFilterKey()
+
+  // Mutations
+  const deleteApi = useMutation(
+    aspida.api.v1.subjects._subjectId(subjectId).$delete,
+    {
+      onSuccess: () => {
+        // Invalidate and refetch
+        queryClient.invalidateQueries(getListKey())
+      },
+    }
+  )
+
+  if (query.error) {
     return (
       <AccordionPanel height={BODY_HEIGHT}>
         <pre style={{ maxHeight: 100, overflow: 'auto' }}>
-          {JSON.stringify(subject.errorMaybe(), null, 2)}
+          {JSON.stringify(query.error, null, 2)}
         </pre>
       </AccordionPanel>
     )
@@ -53,7 +76,18 @@ const Comp: React.FC<Props> = (props) => {
 
   return (
     <AccordionPanel height={BODY_HEIGHT}>
-      <pre>{subject.getValue().description}</pre>
+      <FormStatus
+        formStatus={{
+          success: deleteApi.isSuccess,
+          error: deleteApi.error,
+          pending: deleteApi.isLoading,
+        }}
+      />
+      <Button onClick={() => query.refetch()}>refetch</Button>
+      <Button onClick={() => deleteApi.mutate({ body: { id: subjectId } })}>
+        delete
+      </Button>
+      <pre>{query.data?.description}</pre>
     </AccordionPanel>
   )
 }
