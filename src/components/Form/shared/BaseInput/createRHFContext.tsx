@@ -1,9 +1,9 @@
+import { createContext } from 'react'
 import {
   FieldValues,
-  FormProvider,
-  useFormContext,
   UseFormProps,
   useForm as useReactHookForm,
+  UseFormReturn,
 } from 'react-hook-form'
 
 /** React Hook Form Utility for React.Context*/
@@ -19,16 +19,28 @@ export const createRHFContext = <
     children?: React.ReactNode
   }
 
+  const Context = createContext<UseFormReturn<TFieldValues, TContext> | null>(
+    null
+  )
+
+  const useForm = () => {
+    const context = useContext(Context)
+
+    if (!context) {
+      throw new Error('require wrapped by FormProvider ')
+    }
+
+    return context
+  }
+
   const Provider: React.FC<FormProviderProps> = ({
     formProps: innerFormProps,
     children,
   }) => {
     const form = useReactHookForm({ ...outerFormProps, ...innerFormProps })
 
-    return <FormProvider {...form}>{children}</FormProvider>
+    return <Context.Provider value={form}>{children}</Context.Provider>
   }
-
-  const useForm = () => useFormContext<TFieldValues>()
 
   const withProvider = <OriginalProps extends {}>(
     WrappedComponent: React.ComponentType<OriginalProps>
