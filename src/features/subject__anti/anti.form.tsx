@@ -15,7 +15,9 @@ type Form = {
   disabled: boolean
 }
 
-const [useSubjectForm, withFormProvider] = createRHFContext<Form>()
+const [useSubjectForm, withFormProvider] = createRHFContext<Form>({
+  defaultValues: { name: '', description: '', disabled: false },
+})
 
 export const AntiSubjectForm = withFormProvider(() => {
   const form = useSubjectForm()

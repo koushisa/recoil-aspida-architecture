@@ -57,10 +57,12 @@ export const {
 })
 
 /**
- * atomWithAspidaが内部でやっているキャッシュ管理ロジックの抽象度を下げたもの
- * Antiの欠点を克服してコンポーネントからロジックを切り出しつつもカスタマイズできるのが利点
+ * atomWithQueryを利用し、キャッシュ管理ロジックをデータフローグラフに定義したパターン
+ * Anti(React-Query)と比較するとキャッシュキーによる管理がなくなり、Recoilのデータフローグラフに移譲できるのが利点で大部分のボイラープレートやカスタムフックが不要となる
+ * Antiではキャッシュキーのために必要だったFilter用のフォームではこのパターンでは不要となるのはポイント
+ * なにがどう依存しているかはデータフローグラフが全て知っている
  *
- * こちらはキャッシュ管理などを自分で定義するためボイラープレートは増える
+ * atomWithAspidaと比較するとpostなどの処理を自分で定義する分のボイラープレートは増える
  */
 export const SandboxSubjectRoot: React.FC = () => {
   const { log, refetch } = useSandboxSubjectsMutation()

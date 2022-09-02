@@ -32,7 +32,19 @@ export const AntiSubjectRoot = withFormProvider(() => {
     <>
       <h2>anti form</h2>
       <Box padding={4}>
-        {isOptimistic ? <AntiSubjectForm_Optimistic /> : <AntiSubjectForm />}
+        {isOptimistic ? (
+          <AntiSubjectForm_Optimistic
+            formProps={{
+              defaultValues: {
+                name: 'optimistic name',
+                description: 'optimistic desc',
+                disabled: true,
+              },
+            }}
+          />
+        ) : (
+          <AntiSubjectForm />
+        )}
 
         <Checkbox
           checked={isOptimistic}

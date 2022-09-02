@@ -10,8 +10,8 @@ import {
 const useReload = () => {
   const form = useAntiSubjectFilterForm()
 
-  const reload = async (filter: AntiSubjectFilterForm) => {
-    form.setValue('name', filter.name)
+  const reload = (filter: AntiSubjectFilterForm) => {
+    form.reset(filter)
   }
 
   return reload

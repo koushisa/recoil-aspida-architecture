@@ -11,44 +11,34 @@ import {
 } from '@/features/subject__anti/anti.root'
 import { aspida } from '@/lib/aspida'
 
-const path = aspida.api.v1.subjects.$path()
+const rootPath = aspida.api.v1.subjects.$path()
 
-const fetchSubjectList = async ({
+const fetchSubjectList = ({
   queryKey: [, filter],
 }: QueryFunctionContext<
-  ReturnType<typeof AntiSubjectQuery['Keys']['filterList']>
+  ReturnType<typeof AntiSubjectQuery['Keys']['list']>
 >) => {
-  console.log({ filter })
-  return await aspida.api.v1.subjects.$get({ query: filter })
+  return aspida.api.v1.subjects.$get({ query: filter })
 }
 
 export const AntiSubjectQuery = {
-  // https://tkdodo.eu/blog/leveraging-the-query-function-context#object-query-keys
   Keys: {
-    filterList: (filter: AntiSubjectFilterForm) => [path, filter] as const,
-    item: (subjectId: number) => [path, subjectId] as const,
+    root: rootPath,
+    list: (condition: AntiSubjectFilterForm) => [rootPath, condition] as const,
+    item: (subjectId: number) => [rootPath, subjectId] as const,
   },
+
+  // https://tkdodo.eu/blog/leveraging-the-query-function-context#object-query-keys
 
   useListFilterKey: () => {
     const form = useAntiSubjectFilterForm()
-
-    const getKey = useCallback(() => {
-      return AntiSubjectQuery.Keys.filterList(form.getValues())
-    }, [form])
-
-    return getKey
+    return AntiSubjectQuery.Keys.list(form.watch())
   },
 
   useList: () => {
-    const form = useAntiSubjectFilterForm()
+    const listKey = AntiSubjectQuery.useListFilterKey()
 
-    const query = useQuery(
-      AntiSubjectQuery.Keys.filterList(form.watch()),
-      fetchSubjectList,
-      {
-        suspense: true,
-      }
-    )
+    const query = useQuery(listKey, fetchSubjectList)
 
     return query
   },
@@ -57,15 +47,13 @@ export const AntiSubjectQuery = {
     onSuccess: () => void
     onError: (e: unknown) => void
   }) => {
-    // Access the client
     const queryClient = useQueryClient()
-    const getListKey = AntiSubjectQuery.useListFilterKey()
+    const listKey = AntiSubjectQuery.useListFilterKey()
 
-    // Mutations
     const post = useMutation(aspida.api.v1.subjects.$post, {
       onSuccess: () => {
         // Invalidate and refetch
-        queryClient.invalidateQueries(getListKey())
+        queryClient.invalidateQueries([rootPath])
         options.onSuccess()
       },
       onError: (err) => {
@@ -75,48 +63,27 @@ export const AntiSubjectQuery = {
 
     // tanstack.com/query/v4/docs/guides/optimistic-updates#updating-a-list-of-todos-when-adding-a-new-todo
     const optimisticPost = useMutation(aspida.api.v1.subjects.$post, {
-      // When mutate is called:
       onMutate: async (newValue) => {
-        const listKey = getListKey()
+        await queryClient.cancelQueries([rootPath])
 
-        console.log(listKey)
+        const prevList =
+          queryClient.getQueryData<Subject[]>([rootPath], {
+            exact: false,
+          }) || []
 
-        // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries(listKey)
+        queryClient.setQueryData(listKey, [
+          ...prevList,
+          { id: prevList.length + 1, ...newValue.body },
+        ])
 
-        // Snapshot the previous value
-        const prevList = queryClient.getQueryData<Subject[]>(listKey)
-
-        // Optimistically update to the new value
-        queryClient.setQueryData<Subject[]>(listKey, (current) => {
-          console.log({ prevList, current })
-          if (prevList === undefined) {
-            return [{ id: 1, ...newValue.body }]
-          }
-
-          const optimisticData = [
-            ...prevList,
-            { id: prevList.length + 1, ...newValue.body },
-          ]
-
-          console.log({ optimisticData })
-
-          return optimisticData
-        })
-
-        console.log({ prevList })
-
-        // Return a context object with the snapshotted value
         return { prevList }
       },
-      // If the mutation fails, use the context returned from onMutate to roll back
       onError: (err, _, context) => {
-        queryClient.setQueryData(getListKey(), context?.prevList)
+        queryClient.setQueryData([rootPath], context?.prevList)
         options.onError(err)
       },
-      // Always refetch after error or success:
       onSettled: () => {
-        queryClient.invalidateQueries(getListKey())
+        queryClient.invalidateQueries([rootPath])
       },
       onSuccess: () => {
         options.onSuccess()

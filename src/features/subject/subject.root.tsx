@@ -22,17 +22,15 @@ export const {
 })
 
 /**
- * Antiと比較すると大部分のロジックをatomWithAspidaに隠蔽した
+ * anti, sandboxと比較すると大部分のロジックがatomWithAspidaに隠蔽された
  * そのおかげで全体の見通しがよくなった
- * Read/Writedで各コンポーネントは独立しており、詳細ロジックもそれぞれに凝集している
+ * Read/Writedで各コンポーネントは独立しており、詳細ロジックもそれぞれに凝集し、
  * Rootは本来の責務であるブロック要素の配置やConcurrentなどUXの責務に集中できる
  *
  * atomWithAspidaが内部でやっているロジックの抽象度を下げたバージョンは ../sandbox 参照
  * そちらではキャッシュ管理を自分で定義している
  */
 export const SubjectRoot: React.FC = () => {
-  const { getApi } = useSubjectsMutation()
-
   return (
     <>
       <h2>form</h2>

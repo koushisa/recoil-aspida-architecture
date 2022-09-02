@@ -51,15 +51,11 @@ const Comp: React.FC<Props> = (props) => {
     }
   )
 
-  const getListKey = AntiSubjectQuery.useListFilterKey()
-
-  // Mutations
   const deleteApi = useMutation(
     aspida.api.v1.subjects._subjectId(subjectId).$delete,
     {
       onSuccess: () => {
-        // Invalidate and refetch
-        queryClient.invalidateQueries(getListKey())
+        queryClient.invalidateQueries([AntiSubjectQuery.Keys.root])
       },
     }
   )
