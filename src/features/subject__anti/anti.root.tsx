@@ -9,14 +9,14 @@ export type AntiSubjectFilterForm = {
   name: string | undefined
 }
 
-const ctx = createRHFContext<AntiSubjectFilterForm>({
-  defaultValues: {
-    name: '',
-  },
-})
+const [useAntiSubjectFilterForm, withFormProvider] =
+  createRHFContext<AntiSubjectFilterForm>({
+    defaultValues: {
+      name: '',
+    },
+  })
 
-const [, withFormProvider] = ctx
-export const [useAntiSubjectFilterForm] = ctx
+export { useAntiSubjectFilterForm }
 
 /**
  * 状態の整合性を取るために、データとロジックは一元管理したい
