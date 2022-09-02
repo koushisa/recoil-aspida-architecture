@@ -160,8 +160,8 @@ export const {
 
 ### Mutation
 
-- [Mutation sample](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.form.tsx#L39-L48)
-- [Optimistic update sample](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.form.tsx#L68-L95)
+- [Mutation sample](https://github.com/koushisa/recoil-aspida-sample/blob/03d3543a7867c26cf301a2569d18bdcb1110cee9/src/features/subject/subject.form.tsx#L20-L29)
+- [Optimistic update sample](https://github.com/koushisa/recoil-aspida-sample/blob/03d3543a7867c26cf301a2569d18bdcb1110cee9/src/features/subject/subject.form.tsx#L49-L63)
 
 ### props-based api call
 
