@@ -20,10 +20,8 @@ const [useAntiSubjectFilterForm, withFormProvider] =
 export { useAntiSubjectFilterForm }
 
 /**
- * 状態の整合性を取るために、データとロジックは一元管理したい
- * また、Lifting State UpせずにRead/Writeでコンポーネントを分離するのは素のReactでは難しい
- * ここではあえてRootでLifting State Upしている
- * しかし本質的にはここのロジックは抽象化可能で、コンポーネントから切り出せるのではないか？
+ * キャッシュ管理の複雑さをコンポーネントに露出させたくないので ./hooks にまとめている
+ * React Queryのvariablesのために絞り込み検索(Filter)のフォームを露出させないといけないのが悩ましい
  */
 export const AntiSubjectRoot = withFormProvider(() => {
   const [isOptimistic, setIsOptimistic] = useState(false)
