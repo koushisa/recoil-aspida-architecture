@@ -10,8 +10,6 @@ import {
 const useReload = () => {
   const form = useAntiSubjectFilterForm()
 
-  // TODO: これだとエラー出る???
-  // あと、rootに集約しないパターンで実装したらどうなるか試してみる
   const reload = async (filter: AntiSubjectFilterForm) => {
     form.setValue('name', filter.name)
   }

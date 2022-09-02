@@ -77,21 +77,34 @@ export const AntiSubjectQuery = {
     const optimisticPost = useMutation(aspida.api.v1.subjects.$post, {
       // When mutate is called:
       onMutate: async (newValue) => {
+        const listKey = getListKey()
+
+        console.log(listKey)
+
         // Cancel any outgoing refetches (so they don't overwrite our optimistic update)
-        await queryClient.cancelQueries([getListKey()])
+        await queryClient.cancelQueries(listKey)
 
         // Snapshot the previous value
-        const prevList = queryClient.getQueryData<Subject[]>(getListKey())
+        const prevList = queryClient.getQueryData<Subject[]>(listKey)
 
         // Optimistically update to the new value
-        queryClient.setQueryData<Subject[]>(getListKey(), () => {
-          console.log({ previousTodos: prevList })
+        queryClient.setQueryData<Subject[]>(listKey, (current) => {
+          console.log({ prevList, current })
           if (prevList === undefined) {
             return [{ id: 1, ...newValue.body }]
           }
 
-          return [...prevList, { id: prevList.length + 1, ...newValue.body }]
+          const optimisticData = [
+            ...prevList,
+            { id: prevList.length + 1, ...newValue.body },
+          ]
+
+          console.log({ optimisticData })
+
+          return optimisticData
         })
+
+        console.log({ prevList })
 
         // Return a context object with the snapshotted value
         return { prevList }

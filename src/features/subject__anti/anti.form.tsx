@@ -1,5 +1,9 @@
 import { Button, Checkbox } from '@chakra-ui/react'
-import type { SubmitErrorHandler, SubmitHandler } from 'react-hook-form'
+import type {
+  SubmitErrorHandler,
+  SubmitHandler,
+  UseFormReturn,
+} from 'react-hook-form'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
 import { createRHFContext } from '@/components/Form/shared/BaseInput'
@@ -16,7 +20,7 @@ const [useSubjectForm, withFormProvider] = createRHFContext<Form>()
 export const AntiSubjectForm = withFormProvider(() => {
   const form = useSubjectForm()
 
-  const { post, optimisticPost } = AntiSubjectQuery.useMutation({
+  const { post } = AntiSubjectQuery.useMutation({
     onSuccess() {
       alert('post success')
       form.reset()
@@ -27,50 +31,27 @@ export const AntiSubjectForm = withFormProvider(() => {
     },
   })
 
-  const [isOptimistic, setIsOptimistic] = useState(false)
-
   return (
     <AntiSubjectFormInput
       FormStatus={
         <FormStatus
-          formStatus={
-            isOptimistic
-              ? {
-                  success: optimisticPost.isSuccess,
-                  error: optimisticPost.error,
-                  pending: optimisticPost.isLoading,
-                }
-              : {
-                  success: post.isSuccess,
-                  error: post.error,
-                  pending: post.isLoading,
-                }
-          }
+          formStatus={{
+            success: post.isSuccess,
+            error: post.error,
+            pending: post.isLoading,
+          }}
         />
       }
       Actions={
         <>
           <Button type='submit'>CREATE</Button>
-          <Checkbox
-            checked={isOptimistic}
-            onChange={(_) => {
-              setIsOptimistic((v) => !v)
-            }}>
-            optimistic
-          </Checkbox>
         </>
       }
+      form={form}
       onValid={(data) => {
-        if (isOptimistic) {
-          // 動かない
-          optimisticPost.mutate({
-            body: data,
-          })
-        } else {
-          post.mutate({
-            body: data,
-          })
-        }
+        post.mutate({
+          body: data,
+        })
       }}
       onInValid={(err, evt) => {
         console.log({ err, evt })
@@ -79,15 +60,15 @@ export const AntiSubjectForm = withFormProvider(() => {
   )
 })
 
-const AntiSubjectFormInput: React.FC<{
+export const AntiSubjectFormInput: React.FC<{
   FormStatus: React.ReactNode
   Actions: React.ReactNode
+  form: UseFormReturn<Form, any>
   onValid: SubmitHandler<Form>
   onInValid?: SubmitErrorHandler<Form> | undefined
 }> = (props) => {
-  const { FormStatus, Actions, onValid, onInValid } = props
+  const { FormStatus, Actions, onValid, onInValid, form } = props
 
-  const form = useSubjectForm()
   const { control } = form
 
   return (
