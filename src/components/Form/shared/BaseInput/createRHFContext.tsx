@@ -14,12 +14,12 @@ export const createRHFContext = <
 >(
   outerFormProps?: UseFormProps<TFieldValues, TContext>
 ) => {
-  type ProviderProps = {
+  type FormProviderProps = {
     formProps?: UseFormProps<TFieldValues, TContext>
     children?: React.ReactNode
   }
 
-  const Provider: React.FC<ProviderProps> = ({
+  const Provider: React.FC<FormProviderProps> = ({
     formProps: innerFormProps,
     children,
   }) => {
@@ -33,7 +33,7 @@ export const createRHFContext = <
   const withProvider = <OriginalProps extends {}>(
     WrappedComponent: React.ComponentType<OriginalProps>
   ) => {
-    type ResultProps = OriginalProps & ProviderProps & ExtendedProps
+    type ResultProps = OriginalProps & FormProviderProps & ExtendedProps
 
     const hoc = (props: ResultProps) => {
       const { formProps } = props
