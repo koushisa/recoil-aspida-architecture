@@ -8,7 +8,7 @@ Sample code includes some features for explanation.
 
 - Create, Read, Delete (Update is coming soon)
 - Optimistic Update
-- Automated-Refetching
+- Automated Refetching
 - Suspence based loading
 - Skeleton screen
 - Form is created by [react-hook-form](https://github.com/react-hook-form/react-hook-form)
