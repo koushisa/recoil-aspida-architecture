@@ -20,7 +20,7 @@ https://user-images.githubusercontent.com/31304738/187138482-103484d3-e9ca-486c-
 1. Clone Template
 
 ```
-git clone https://github.com/igdev116/vite-react-ts-eslint-prettier.git
+git clone https://github.com/koushisa/recoil-aspida-sample.git
 ```
 
 2. Install Packages
