@@ -1,3 +1,4 @@
+import type { MutateOption } from '@/lib/recoil/integrations/query/atomWithQuery/utils/mutate'
 import type { RawSelectorOptions } from '@/lib/recoil/ports/types'
 import type {
   CallbackAtomResult,
@@ -21,6 +22,7 @@ type BaseOptions = {
 type BaseMutations<T> = {
   prefetch: (cb: CallbackInterface) => () => Promise<T>
   refetch: (cb: CallbackInterface) => () => void
+  mutate: (cb: CallbackInterface) => (option: MutateOption<T>) => Promise<T>
 }
 
 type QueryResult<T> = [

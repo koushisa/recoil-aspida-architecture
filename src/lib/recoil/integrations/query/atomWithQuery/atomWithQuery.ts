@@ -21,6 +21,10 @@ import type {
   AtomWithQueryFamilyResult,
 } from '@/lib/recoil/integrations/query/atomWithQuery/types'
 import { nanoid } from '@/lib/nanoid'
+import {
+  mutate,
+  MutateOption,
+} from '@/lib/recoil/integrations/query/atomWithQuery/utils/mutate'
 import { usePrevious } from '@/lib/recoil/integrations/query/atomWithQuery/utils/usePrevious'
 import { callbackAtomFamily } from '@/lib/recoil/shorthands/callbackAtom'
 
@@ -139,6 +143,17 @@ export function atomWithQueryFamily<
       () => {
         reset(state(param))
       },
+    mutate: (cb) => (option: MutateOption<T>) => {
+      const { mutationFn, ...delegatedOption } = option
+
+      return mutate({
+        option: delegatedOption,
+        queryState: state(param),
+        recoilCallback: cb,
+        mutationFn,
+        refetch: () => cb.reset(state(param)),
+      })
+    },
   }))
 
   // use state with Loadable and cache invalidation
