@@ -163,6 +163,7 @@ export const {
 ### Mutation
 
 - [Mutation sample](https://github.com/koushisa/recoil-aspida-sample/blob/03d3543a7867c26cf301a2569d18bdcb1110cee9/src/features/subject/subject.form.tsx#L20-L29)
+- [Custom mutation sample](https://github.com/koushisa/recoil-aspida-sample/blob/3e41ce46761a9845fb613ae0e3dd6b4975fede8a/src/features/sandbox/sandbox.root.tsx#L45-L55)
 - [Optimistic update sample](https://github.com/koushisa/recoil-aspida-sample/blob/03d3543a7867c26cf301a2569d18bdcb1110cee9/src/features/subject/subject.form.tsx#L49-L63)
 
 ### props-based api call
