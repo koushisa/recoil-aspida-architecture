@@ -185,9 +185,9 @@ export const {
 ### atomWithQuery
 
 - interface: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/sandbox/sandbox.root.tsx#L18-L21
-- src: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/lib/recoil/integrations/query/atomWithQuery/atomWithQuery.ts#L27
+- src: https://github.com/koushisa/recoil-aspida-sample/blob/d954fcea27724a1ac338dcb5eb95d8c52b9c36db/src/lib/recoil/integrations/query/atomWithQuery/atomWithQuery.ts#L31
 
 ### atomWithQueryFamily
 
 - interface: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.item.tsx#L9-L12
-- src: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/lib/recoil/integrations/query/atomWithQuery/atomWithQuery.ts#L54
+- src: https://github.com/koushisa/recoil-aspida-sample/blob/d954fcea27724a1ac338dcb5eb95d8c52b9c36db/src/lib/recoil/integrations/query/atomWithQuery/atomWithQuery.ts#L58
