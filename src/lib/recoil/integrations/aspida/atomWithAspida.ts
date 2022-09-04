@@ -9,18 +9,14 @@ import {
   RecoilLoadable,
   CallbackInterface,
   useRecoilCallback,
-  useRecoilValue,
 } from 'recoil'
 import type {
   AspidaMethod,
   AspidaEntry,
   GetApiOption,
   UseAspidaMutation,
-  UseAspidaQuery,
   AtomWithAspidaResult,
-  GetApiObj,
-  GetApiReturn,
-  MutationOptions,
+  UseAspidaQuery,
 } from '@/lib/recoil/integrations/aspida/types'
 import { nanoid } from '@/lib/nanoid'
 import { isUpdater } from '@/lib/recoil/integrations/aspida/utils/isUpdater'
@@ -128,14 +124,25 @@ export const atomWithAspida = <E extends AspidaEntry>(
 
       return api.$get(apiOption)
     },
-  })
+    mutations: {
+      call: (callback) => async (query) => {
+        const option = callback.snapshot.getLoadable(optionState).getValue()
+        const newOption = {
+          ...option,
+          query: isUpdater(query) ? query(option?.query) : query,
+        }
 
-  type InnerGetApi = Pick<GetApiObj<E>, 'call' | 'reload'>
-  const innerGetApi = selector<InnerGetApi>({
-    key: `${key}/innerGetApi`,
-    get: ({ getCallback }) => {
-      return {
-        call: getCallback((callback) => async (query) => {
+        const res = await callApi({
+          method: '$get',
+          option: newOption,
+          callback,
+        })
+
+        return res
+      },
+
+      reload: (callback) => async (query) => {
+        if (!isQueryInitialized) {
           const option = callback.snapshot.getLoadable(optionState).getValue()
           const newOption = {
             ...option,
@@ -148,45 +155,21 @@ export const atomWithAspida = <E extends AspidaEntry>(
             callback,
           })
 
-          return res
-        }),
+          isQueryInitialized = true
 
-        reload: getCallback((callback) => async (query) => {
-          if (!isQueryInitialized) {
-            const option = callback.snapshot.getLoadable(optionState).getValue()
-            const newOption = {
-              ...option,
-              query: isUpdater(query) ? query(option?.query) : query,
-            }
+          callback.set(optionState, newOption)
+          callback.set(queryState, res)
 
-            const res = await callApi({
-              method: '$get',
-              option: newOption,
-              callback,
-            })
+          return
+        }
 
-            isQueryInitialized = true
-
-            callback.set(optionState, newOption)
-            callback.set(queryState, res)
-
-            return
-          }
-
-          callback.set(optionState, (current) => ({
-            ...current,
-            query: isUpdater(query) ? query(current.query) : query,
-          }))
-        }),
-      }
+        callback.set(optionState, (current) => ({
+          ...current,
+          query: isUpdater(query) ? query(current.query) : query,
+        }))
+      },
     },
   })
-
-  const useAspidaQuery: UseAspidaQuery<E> = (options) => {
-    const { keepPrevious = false } = options || {}
-
-    return useBaseQuery({ keepPrevious })
-  }
 
   type CallApiArg = {
     method: AspidaMethod
@@ -210,86 +193,14 @@ export const atomWithAspida = <E extends AspidaEntry>(
     return api(option)
   }
 
-  type MutateArg = {
-    getApi: {
-      refetch: () => void
-    }
-    method: Exclude<AspidaMethod, '$get'>
-    option: MutationOptions<GetApiReturn<E>>
-    callback: CallbackInterface
-  }
+  const useAspidaQuery: UseAspidaQuery<E> = (options) => {
+    const { keepPrevious = false } = options || {}
 
-  const mutate = (arg: MutateArg) => {
-    const {
-      getApi,
-      option: {
-        rollbackOnError,
-        refetchOnSuccess,
-        optimisticData: createOptimisticData,
-        onStart,
-        onSuccess,
-        onError,
-        onEnd,
-      },
-      callback: { snapshot, set },
-    } = arg
-
-    const recorded = snapshot.getLoadable(queryState).getValue()
-    const optimisticData = createOptimisticData?.(recorded)
-
-    const call = (current: typeof recorded) =>
-      new Promise<any>((resolve, reject) => {
-        onStart?.(current)
-
-        callApi(arg)
-          .then((res) => {
-            resolve(res)
-            onSuccess?.(current)
-
-            if (refetchOnSuccess) {
-              getApi.refetch()
-            }
-          })
-          .catch((err) => {
-            onError?.(current)
-            reject(err)
-          })
-          .finally(() => {
-            onEnd?.(current)
-          })
-      })
-
-    if (optimisticData === undefined) {
-      return call(recorded)
-    }
-
-    const optimisticUpdate = () =>
-      new Promise<void>((resolve, reject) => {
-        set(queryState, optimisticData)
-
-        call(optimisticData)
-          .then(() => {
-            resolve()
-          })
-          .catch((err) => {
-            reject(err)
-
-            if (!rollbackOnError) {
-              return
-            }
-
-            set(queryState, recorded)
-          })
-      })
-
-    return optimisticUpdate()
+    return useBaseQuery({ keepPrevious }) as any
   }
 
   const useAspidaMutation: UseAspidaMutation<E> = (mutationOption) => {
-    const baseGetApi = {
-      ...useBaseQueryMutation(),
-      ...useRecoilValue(innerGetApi),
-    }
+    const baseGetApi = useBaseQueryMutation()
 
     const getApi = {
       ...baseGetApi,
@@ -298,11 +209,15 @@ export const atomWithAspida = <E extends AspidaEntry>(
 
     const callPost = useRecoilCallback(
       (callback) => (option: any) => {
-        return mutate({
-          method: '$post',
-          getApi,
-          option,
-          callback,
+        return getApi.mutate({
+          ...mutationOption,
+          ...option,
+          mutationFn: () =>
+            callApi({
+              method: '$post',
+              option,
+              callback,
+            }),
         })
       },
       []
@@ -311,11 +226,15 @@ export const atomWithAspida = <E extends AspidaEntry>(
 
     const callPut = useRecoilCallback(
       (callback) => async (option: any) => {
-        return mutate({
-          method: '$put',
-          getApi,
-          option,
-          callback,
+        return getApi.mutate({
+          ...mutationOption,
+          ...option,
+          mutationFn: () =>
+            callApi({
+              method: '$put',
+              option,
+              callback,
+            }),
         })
       },
       []
@@ -324,11 +243,15 @@ export const atomWithAspida = <E extends AspidaEntry>(
 
     const callPatch = useRecoilCallback(
       (callback) => async (option: any) => {
-        return mutate({
-          method: '$patch',
-          getApi,
-          option,
-          callback,
+        return getApi.mutate({
+          ...mutationOption,
+          ...option,
+          mutationFn: () =>
+            callApi({
+              method: '$patch',
+              option,
+              callback,
+            }),
         })
       },
       []
@@ -337,11 +260,15 @@ export const atomWithAspida = <E extends AspidaEntry>(
 
     const callDelete = useRecoilCallback(
       (callback) => async (option: any) => {
-        return mutate({
-          method: '$delete',
-          getApi,
-          option,
-          callback,
+        return getApi.mutate({
+          ...mutationOption,
+          ...option,
+          mutationFn: () =>
+            callApi({
+              method: '$delete',
+              option,
+              callback,
+            }),
         })
       },
       []
