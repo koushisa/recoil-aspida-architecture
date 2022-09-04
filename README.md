@@ -180,7 +180,7 @@ export const {
 ### atomWithAspida
 
 - interface: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.root.tsx#L10-L13
-- src: https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/lib/recoil/integrations/aspida/atomWithAspida.ts#L43
+- src: https://github.com/koushisa/recoil-aspida-sample/blob/a36d5f4ad3537628495797ddd8b334dde5051730/src/lib/recoil/integrations/aspida/atomWithAspida.ts#L39
 
 ### atomWithQuery
 
