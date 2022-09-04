@@ -7,7 +7,7 @@ This architecture is opinionated, but intended to scalable with Render As Fetch 
 Sample code includes some features for explanation.
 
 - Create, Read, Delete (Update is coming soon)
-- Custom mutation logics that is defined in data-flow-graph
+- Custom mutations that is defined in data-flow-graph
   - Optimistic Update
   - Automated Refetching
 - Suspence based loading
