@@ -10,6 +10,7 @@ import {
   selectorFamily,
   atomFamily,
   SerializableParam,
+  RecoilLoadable,
 } from 'recoil'
 import type {
   UseAtomWithQueryOptions,
@@ -74,6 +75,12 @@ export function atomWithQueryFamily<
     dangerouslyAllowMutability,
 
     get: (param) => (opts) => {
+      // In Recoil, Selector data is stored in memory on the process, not in the RecoilRoot.
+      // This guard avoided zombie connection when SSR.
+      if (typeof window === 'undefined') {
+        return RecoilLoadable.loading()
+      }
+
       // for cache invalidation
       opts.get(invalidate(param))
 
