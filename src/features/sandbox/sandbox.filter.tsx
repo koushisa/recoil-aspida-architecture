@@ -2,7 +2,7 @@ import { Button } from '@chakra-ui/react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
-import { useSandboxSubjectsMutation } from '@/features/sandbox/sandbox.root'
+import { sandBoxSubjectList } from '@/features/sandbox/sandbox.root'
 
 type Filter = {
   name: string | undefined
@@ -18,7 +18,7 @@ export const SandboxSubjectFilter: React.FC = () => {
   })
   const { control, handleSubmit } = form
 
-  const { reload } = useSandboxSubjectsMutation()
+  const { reload } = sandBoxSubjectList.useMutation()
 
   const onClickFilter = handleSubmit((data) => {
     reload(data)

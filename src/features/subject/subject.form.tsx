@@ -4,7 +4,7 @@ import type { SubmitErrorHandler, SubmitHandler } from 'react-hook-form'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
 import { createRHFContext } from '@/components/Form/shared/BaseInput'
-import { useSubjectsMutation } from '@/features/subject/subject.root'
+import { subjectListQuery } from '@/features/subject/subject.root'
 
 type Form = {
   name: string
@@ -17,7 +17,7 @@ const [useSubjectForm, withFormProvider] = createRHFContext<Form>()
 export const SubjectForm = withFormProvider(() => {
   const form = useSubjectForm()
 
-  const { postApi } = useSubjectsMutation({
+  const { postApi } = subjectListQuery.useMutation({
     onSuccess() {
       alert('post success')
       form.reset()

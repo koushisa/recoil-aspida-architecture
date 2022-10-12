@@ -1,9 +1,6 @@
 import type { MutateOption } from '@/lib/recoil/integrations/query/atomWithQuery/utils/mutate'
 import type { RawSelectorOptions } from '@/lib/recoil/ports/types'
-import type {
-  CallbackAtomResult,
-  CallbackAtomSelector,
-} from '@/lib/recoil/shorthands/callbackAtom'
+import type { CallbackAtomSelector } from '@/lib/recoil/shorthands/callbackAtom'
 import type {
   AtomOptions,
   RecoilState,
@@ -25,14 +22,18 @@ type BaseMutations<T> = {
   mutate: (cb: CallbackInterface) => (option: MutateOption<T>) => Promise<T>
 }
 
-type QueryResult<T> = [
-  RecoilState<T>,
-  (options?: UseAtomWithQueryOptions) => Loadable<T>
-]
+type QueryResult<T> = {
+  data: RecoilState<T>
+  useQuery: (options?: UseAtomWithQueryOptions) => T
+  useQueryLoadable: (options?: UseAtomWithQueryOptions) => Loadable<T>
+}
 
-type MutationResult<T, Mutations extends MutationsInput> = CallbackAtomResult<
-  BaseMutations<T> & Mutations
->
+type MutationResult<T, Mutations extends MutationsInput> = {
+  mutation: CallbackAtomSelector<BaseMutations<T> & Mutations>
+  useMutation: () => UnwrapRecoilValue<
+    CallbackAtomSelector<BaseMutations<T> & Mutations>
+  >
+}
 
 export type MutationsInput<AnyFunc = (...args: ReadonlyArray<any>) => any> =
   Record<string, (cb: CallbackInterface) => AnyFunc>
@@ -52,10 +53,10 @@ export type AtomWithQueryOptions<T, Mutations extends MutationsInput> = Omit<
   mutations?: Mutations
 }
 
-export type AtomWithQueryResult<T, Mutations extends MutationsInput> = {
-  query: QueryResult<T>
-  mutation: MutationResult<T, Mutations>
-}
+export type AtomWithQueryResult<
+  T,
+  Mutations extends MutationsInput
+> = QueryResult<T> & MutationResult<T, Mutations>
 
 export type AtomWithQueryFamilyOptions<
   T,
@@ -68,23 +69,21 @@ export type AtomWithQueryFamilyOptions<
   mutations?: (param: P) => Mutations
 }
 
-type QueryFamilyResult<T, P> = [
-  (param: P) => RecoilState<T>,
-  (options: UseAtomWithQueryFamilyOptions<P>) => Loadable<T>
-]
+type QueryFamilyResult<T, P> = {
+  data: (param: P) => RecoilState<T>
+  useQuery: (options: UseAtomWithQueryFamilyOptions<P>) => T
+  useQueryLoadable: (options: UseAtomWithQueryFamilyOptions<P>) => Loadable<T>
+}
 
-type MutationFamilyResult<T, P, Mutations extends MutationsInput> = [
-  (param: P) => CallbackAtomSelector<Mutations>,
-  (
+type MutationFamilyResult<T, P, Mutations extends MutationsInput> = {
+  mutation: (param: P) => CallbackAtomSelector<Mutations>
+  useMutation: (
     param: P
   ) => UnwrapRecoilValue<CallbackAtomSelector<BaseMutations<T> & Mutations>>
-]
+}
 
 export type AtomWithQueryFamilyResult<
   T,
   P extends SerializableParam,
   Mutations extends MutationsInput
-> = {
-  query: QueryFamilyResult<T, P>
-  mutation: MutationFamilyResult<T, P, Mutations>
-}
+> = QueryFamilyResult<T, P> & MutationFamilyResult<T, P, Mutations>

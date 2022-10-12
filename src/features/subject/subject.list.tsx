@@ -10,10 +10,10 @@ import React from 'react'
 import type { Subject } from 'api/api/v1/subjects'
 import { ErrorDump } from '@/components/ErrorDump/ErrorDump'
 import { SubjectItem } from '@/features/subject/subject.item'
-import { useSubjects } from '@/features/subject/subject.root'
+import { subjectListQuery } from '@/features/subject/subject.root'
 
 export const SubjectList: React.FC = () => {
-  const subjects = useSubjects({ keepPrevious: true })
+  const subjects = subjectListQuery.useQueryLoadable({ keepPrevious: true })
 
   if (subjects.state === 'hasError') {
     return <ErrorDump error={subjects.errorMaybe()} />

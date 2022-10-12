@@ -27,16 +27,19 @@ export type UseAspidaMutationOptions = {
 
 export type UseAspidaQuery<E extends AspidaEntry, R = GetApiReturn<E>> = (
   options?: UseAspidaQueryOptions
-) => Loadable<R>
+) => R
+
+export type UseAspidaQueryLoadable<
+  E extends AspidaEntry,
+  R = GetApiReturn<E>
+> = (options?: UseAspidaQueryOptions) => Loadable<R>
 
 export type UseAspidaMutation<E extends AspidaEntry> = (
   options?: UseAspidaMutationOptions
 ) => MutationObj<E>
 
-export type AtomWithAspidaResult<E extends AspidaEntry> = {
-  query: QueryResult<E>
-  mutation: MutationResult<E>
-}
+export type AtomWithAspidaResult<E extends AspidaEntry> = QueryResult<E> &
+  MutationResult<E>
 
 export type GetApiOption<E extends AspidaEntry> = NonNullable<
   Parameters<E['$get']>[0]
@@ -65,12 +68,15 @@ export type MutationOptions<T> = {
   onError?: (current: T) => void
 }
 
-type QueryResult<E extends AspidaEntry, R = GetApiReturn<E>> = [
-  RecoilState<R>,
-  UseAspidaQuery<E>
-]
+type QueryResult<E extends AspidaEntry, R = GetApiReturn<E>> = {
+  data: RecoilState<R>
+  useQuery: UseAspidaQuery<E>
+  useQueryLoadable: UseAspidaQueryLoadable<E>
+}
 
-type MutationResult<E extends AspidaEntry> = [UseAspidaMutation<E>]
+type MutationResult<E extends AspidaEntry> = {
+  useMutation: UseAspidaMutation<E>
+}
 
 /** merge and purge mutations */
 type MutationObj<E extends AspidaEntry> = SpreadTwo<
