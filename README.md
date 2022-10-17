@@ -49,6 +49,10 @@ yarn dev
   - REST API + tanstack query lacks domain modeling in these cases.
   - tanstack query does not support URL persistence, etc.
   - Sometimes you want to have an abstraction on the data fetch layer
+- implementation with tanstack query 
+  - cache management seemed a bit redundant.
+  - dir: https://github.com/koushisa/recoil-aspida-sample/tree/main/src/features/subject__anti
+  - cache management: https://github.com/koushisa/recoil-aspida-sample/blob/main/src/features/subject__anti/anti.hooks.tsx
 
 ## Features
 
