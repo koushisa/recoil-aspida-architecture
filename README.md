@@ -49,50 +49,63 @@ yarn dev
 
 
 ```tsx
-export const {
-  query: [subjectListState, useSubjects],
-  mutation: [useSubjectsMutation],
-} = atomWithAspida({
-  // you can pass any aspida entry
-  entry() {
-    return aspida.api.v1.subjects
+const usersQuery = atomWithAspida({
+  entry({ get }) {
+    return aspida.api.users
   },
-  option(_, currentOption) {
+  option({ get }, currentOption) {
     return {
       query: currentOption.query,
     }
   },
 })
 
-// Loadable<Subject[]>
-const subjects = useSubjects()
+---
+usersQuery.data // atom 
+usersQuery.mutation //  getCallback
+usersQuery.useQuery 
+usersQuery.useQueryLoadable
+usersQuery.useMutation
+---
 
-const { getApi, postApi, patchApi, ...etc } = useSubjectsMutation()
+const UsersList = () => {
+  // almout same as: useRecoilValue(usersQuery.data)
+  const users = usersQuery.useQuery()
+  
+  // almout same as: useRecoilValueValueLoadable(usersQuery.data)
+  const users = usersQuery.useQueryLoadable()
 
-// getApi is abstraction of aspida.api.v1.subjects.$get()
-const { prefetch, refetch, reload } = getApi
+  return (/*~*/)
+}
 
-getApi.prefetch()
-getApi.refetch()
-getApi.reload({ name: 'foo' }) // declarative api call. it will update the `subjectListState`.
-const response = getApi.call({ name: 'foo' }) // imperative api call. it won't update state.
+const UserActions = () => {
+  const { getApi, postApi, patchApi, ...etc } = usersQuery.useMutation()
+  
+  // abstraction of aspida.api.users.$get()
+  const { prefetch, refetch, reload } = getApi
 
-// postApi is abstraction of aspida.api.v1.subjects.$post()
-const { error, pending, success } = postApi
+  getApi.prefetch()
+  getApi.refetch()
+  getApi.reload({ name: 'foo' }) // declarative api call. it will update `usersQuery.data`.
+  const response = getApi.call({ name: 'foo' }) // imperative api call. it won't update state.
 
-// call post
-postApi.call({
-  body: { name: 'newName' },
-  // automatically refetch
-  refetchOnSuccess: true,
+  // abstraction of aspida.api.users.$post()
+  const { error, pending, success } = postApi
 
-  // options for optimistic update
-  // refetchOnSuccess: false,
-  // rollbackOnError: true,
-  // optimisticData(current) {
-  //   return [...current, { ...data, id: current.length + 1 }]
-  // },
-})
+  // call post
+  postApi.call({
+    body: { name: 'newName' },
+    // automatically refetch
+    refetchOnSuccess: true,
+
+    // options for optimistic update
+    // refetchOnSuccess: false,
+    // rollbackOnError: true,
+    // optimisticData(current) {
+    //   return [...current, { ...data, id: current.length + 1 }]
+    // },
+  })
+  }
 
 // each endpoint from aspida entry has same interface
 const { call, error, pending, success } = patchApi
@@ -105,15 +118,12 @@ You can access any Recoil nodes in atomWithAspida's callback.
 ### Construct dependency 
 
 ```tsx
-export const {
-  query: [userListState, useUsers],
-  mutation: [useUsersMutation],
-} = atomWithAspida({
- // the `get` is `GetRecoilValue`
- entry({ get }) {
-    const tenantId = get(tenantIdState)
+const usersQuery = atomWithAspida({
+  // the `get` is `GetRecoilValue`
+  entry({ get }) {
+    const orgId = get(orgIdState)
 
-    return aspida.api.v1.tenant._tenantId(tenantId).users
+    return aspida.api.v1.orgs._orgId(orgId).users
   },
   // same here.
   option({ get }, currentOption) {
@@ -132,10 +142,7 @@ export const {
 ### Conditional Fetching
 
 ```tsx
-export const {
-  query: [userListState, useUsers],
-  mutation: [useUsersMutation],
-} = atomWithAspida({
+const usersQuery = atomWithAspida({
   /*~*/
   disabled(opts, currentOption) {
     const disabled = opts.get(someConditionState)
@@ -151,16 +158,13 @@ export const {
 - [Filter sample](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/subject/subject.filter.tsx#L15)
 - [Polling](https://github.com/koushisa/recoil-aspida-sample/blob/33b67c785dc9e9a4fd5ee570fbd408e7357d8d81/src/features/student/student.list.tsx#L26-L30)
 - derrived state
-  - `atomWithAspida` returns [RecoilNode, Hooks] tuple. so it is derivable in the same way as usual.
+  - data is `RecoilState`. so it is derivable in the same way as usual.
   ```tsx
-  export const {
-    query: [userListState, useUsers],
-    mutation: [useUsersMutation],
-  } = atomWithAspida(/*~*/)
+  export const usersQuery = atomWithAspida(/*~*/)
 
   const presentationModel = selector({
     key: "users/presentationModel"
-    get:( {get} ) => createUsersPresentationModel(get(userListState))
+    get:( {get} ) => createUsersPresentationModel(get(usersQuery.data))
   })
   ```
 
