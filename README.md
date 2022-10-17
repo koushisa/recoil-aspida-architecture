@@ -170,8 +170,8 @@ const usersQuery = atomWithAspida({
 - [Use query via hooks](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.list.tsx#L15-L16)
 - [Filter sample](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.filter.tsx#L15-L25)
 - [Polling](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/student/student.list.tsx#L24-L30)
-- derrived state
-  - data is derivable in the same way as usual `RecoilState`
+- Derrived state
+  - `data` is derivable in the same way as usual `RecoilState`
   ```tsx
   export const usersQuery = atomWithAspida(/*~*/)
   
@@ -186,6 +186,24 @@ const usersQuery = atomWithAspida({
     key: "users/domainModel"
     get:({ get }) => createUsersDomainModel(get(usersQuery.data))
   })
+  ```
+- Map/Transform response with Loadable
+  - `useQueryLoadable` returns [Recoil Loadable](https://recoiljs.org/docs/api-reference/core/Loadable/). just use `Loadable.map`.
+  ```tsx
+  export const usersQuery = atomWithAspida(/*~*/)
+  
+  /*~*/
+  
+  const users = usersQuery.useQueryLoadable().map(users => {
+    return {
+      data: users,
+      count: users.length
+    }
+  }).getValue()
+  
+  // mapped
+  users.data 
+  users.count
   ```
   
 
