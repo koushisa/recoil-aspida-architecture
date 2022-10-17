@@ -50,9 +50,10 @@ yarn dev
   - tanstack query does not support URL persistence, etc.
   - Sometimes you want to have an abstraction on the data fetch layer
 - implementation with tanstack query 
-  - cache management seemed a bit redundant.
   - dir: https://github.com/koushisa/recoil-aspida-sample/tree/main/src/features/subject__anti
-  - cache management: https://github.com/koushisa/recoil-aspida-sample/blob/main/src/features/subject__anti/anti.hooks.tsx
+  - fmm... cache management seemed a bit redundant.
+    - https://github.com/koushisa/recoil-aspida-sample/blob/main/src/features/subject__anti/anti.hooks.tsx
+    - https://github.com/koushisa/recoil-aspida-sample/blob/9252a2d48dd8c4ff47d635eca78bcf2326769229/src/features/subject__anti/anti.item.tsx#L46-L52
 
 ## Features
 
