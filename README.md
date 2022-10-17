@@ -171,15 +171,23 @@ const usersQuery = atomWithAspida({
 - [Filter sample](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.filter.tsx#L15-L25)
 - [Polling](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/student/student.list.tsx#L24-L30)
 - derrived state
-  - data is `RecoilState`. so it is derivable in the same way as usual.
+  - data is derivable in the same way as usual `RecoilState`
   ```tsx
   export const usersQuery = atomWithAspida(/*~*/)
-
-  const presentationModel = selector({
-    key: "users/presentationModel"
-    get:( {get} ) => createUsersPresentationModel(get(usersQuery.data))
+  
+  // dictionary
+  const usersById = selector({
+    key: "users/byId",
+    get: ({ get }) => keyBy(get(usersQuery.data), "id")
+  }
+  
+  // domain Model
+  const usersDomainModel = selector({
+    key: "users/domainModel"
+    get:({ get }) => createUsersDomainModel(get(usersQuery.data))
   })
   ```
+  
 
 ### Mutation
 
