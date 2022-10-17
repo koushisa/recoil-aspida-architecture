@@ -1,15 +1,12 @@
 import { AccordionPanel, Button } from '@chakra-ui/react'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { TextSuspence } from '@/components/TextSuspence'
-import { subjectListState } from '@/features/subject/subject.root'
+import { subjectListQuery } from '@/features/subject/subject.root'
 import { aspida } from '@/lib/aspida'
 import { usePromise } from '@/lib/recoil/integrations/aspida/utils/usePromise'
 import { atomWithQueryFamily } from '@/lib/recoil/integrations/query/atomWithQuery/atomWithQuery'
 
-const {
-  query: [_, useSubject],
-  mutation: [__, useSubjectMutation],
-} = atomWithQueryFamily({
+const subjectQuery = atomWithQueryFamily({
   query: (id: number) => () => {
     return aspida.api.v1.subjects._subjectId(id).$get()
   },
@@ -20,7 +17,7 @@ const {
           body: { id },
         })
 
-        cb.reset(subjectListState)
+        cb.reset(subjectListQuery.data)
       },
     }
   },
@@ -48,12 +45,12 @@ export const SubjectItem: React.FC<Props> = (props) => {
 const Comp: React.FC<Props> = (props) => {
   const { subjectId } = props
 
-  const subject = useSubject({
+  const subject = subjectQuery.useQueryLoadable({
     param: subjectId,
     keepPrevious: false,
   })
 
-  const { refetch, callDelete } = useSubjectMutation(subjectId)
+  const { refetch, callDelete } = subjectQuery.useMutation(subjectId)
   const deleteApi = usePromise(callDelete)
 
   if (subject.state === 'hasError') {

@@ -34,10 +34,7 @@ export function atomWithQuery<T, Mutations extends MutationsInput>(
 ): AtomWithQueryResult<T, Mutations> {
   const { key = nanoid(), mutations: mutation = {} } = options
 
-  const {
-    query: [baseQueryState, useBaseQuery],
-    mutation: [baseMutationState, useBaseMutation],
-  } = atomWithQueryFamily({
+  const queryState = atomWithQueryFamily({
     ...options,
     key,
     effects: () => options.effects || [],
@@ -45,14 +42,14 @@ export function atomWithQuery<T, Mutations extends MutationsInput>(
     mutations: () => mutation,
   })
 
-  const useQuery = (options?: UseAtomWithQueryOptions) =>
-    useBaseQuery({ ...options, param: key })
-
-  const useMutation = () => useBaseMutation(key)
-
   return {
-    query: [baseQueryState(key), useQuery],
-    mutation: [baseMutationState(key), useMutation],
+    data: queryState.data(key),
+    mutation: queryState.mutation(key),
+    useQuery: (options?: UseAtomWithQueryOptions) =>
+      queryState.useQuery({ ...options, param: key }),
+    useQueryLoadable: (options?: UseAtomWithQueryOptions) =>
+      queryState.useQueryLoadable({ ...options, param: key }),
+    useMutation: () => queryState.useMutation(key),
   } as any
 }
 
@@ -137,7 +134,7 @@ export function atomWithQueryFamily<
       },
   })
 
-  const [mutationState] = callbackAtomFamily((param: P) => ({
+  const [mutation] = callbackAtomFamily((param: P) => ({
     ...delegatedMutations?.(param),
 
     prefetch:
@@ -163,8 +160,18 @@ export function atomWithQueryFamily<
     },
   }))
 
+  const useQuery = (
+    options: Omit<UseAtomWithQueryFamilyOptions<P>, 'keepPrevious'>
+  ) => {
+    const { param } = options
+
+    const query = useRecoilValue(state(param))
+
+    return query
+  }
+
   // use state with Loadable and cache invalidation
-  const useQuery = (options: UseAtomWithQueryFamilyOptions<P>) => {
+  const useQueryLoadable = (options: UseAtomWithQueryFamilyOptions<P>) => {
     const { param, keepPrevious = false } = options
 
     const query = useRecoilValueLoadable(state(param))
@@ -186,10 +193,13 @@ export function atomWithQueryFamily<
     return resultLoadable
   }
 
-  const useMutation = (param: P) => useRecoilValue(mutationState(param))
+  const useMutation = (param: P) => useRecoilValue(mutation(param))
 
   return {
-    query: [state, useQuery],
-    mutation: [mutationState, useMutation],
+    data: state,
+    mutation,
+    useQuery,
+    useQueryLoadable,
+    useMutation,
   } as any
 }

@@ -11,9 +11,7 @@ import { aspida } from '@/lib/aspida'
 import { atomWithAspida } from '@/lib/recoil/integrations/aspida/atomWithAspida'
 import useInterval from '@/lib/recoil/integrations/query/atomWithQuery/utils/useInterval'
 
-const {
-  query: [stundentsState, useStudents],
-} = atomWithAspida({
+const studentListQuery = atomWithAspida({
   entry({ get }) {
     return aspida.api.v1.students
   },
@@ -23,10 +21,12 @@ const {
 })
 
 export const StudentList: React.FC = () => {
-  const students = useStudents({ keepPrevious: false }).getValue()
+  const students = studentListQuery
+    .useQueryLoadable({ keepPrevious: false })
+    .getValue()
 
   // refetch every second
-  const reset = useResetRecoilState(stundentsState)
+  const reset = useResetRecoilState(studentListQuery.query)
   useInterval(reset, 1000, false)
 
   return (

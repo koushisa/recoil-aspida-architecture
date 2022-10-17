@@ -17,6 +17,7 @@ import type {
   UseAspidaMutation,
   AtomWithAspidaResult,
   UseAspidaQuery,
+  UseAspidaQueryLoadable,
 } from '@/lib/recoil/integrations/aspida/types'
 import { nanoid } from '@/lib/nanoid'
 import { isUpdater } from '@/lib/recoil/integrations/aspida/utils/isUpdater'
@@ -36,9 +37,9 @@ export type AtomWithAspidaArgs<E extends AspidaEntry> = {
   key?: string
 }
 
-export const atomWithAspida = <E extends AspidaEntry>(
+export function atomWithAspida<E extends AspidaEntry>(
   args: AtomWithAspidaArgs<E>
-): AtomWithAspidaResult<E> => {
+): AtomWithAspidaResult<E> {
   const { entry, option, disabled, key = nanoid() } = args
 
   const delegatedEntry = selector({
@@ -81,7 +82,7 @@ export const atomWithAspida = <E extends AspidaEntry>(
           // evaluate in order from the deepest hierarchy
           const self = await getPromise(node)
           const initialValue = await getPromise(delegatedOption)
-          getPromise(queryState)
+          getPromise(queryState.data)
 
           if (isQueryInitialized) {
             return
@@ -97,10 +98,7 @@ export const atomWithAspida = <E extends AspidaEntry>(
     ],
   })
 
-  const {
-    query: [queryState, useBaseQuery],
-    mutation: [, useBaseQueryMutation],
-  } = atomWithQuery({
+  const queryState = atomWithQuery({
     key: `${key}/queryState`,
     query: (opts) => {
       const { get } = opts
@@ -158,7 +156,7 @@ export const atomWithAspida = <E extends AspidaEntry>(
           isQueryInitialized = true
 
           callback.set(optionState, newOption)
-          callback.set(queryState, res)
+          callback.set(queryState.data, res)
 
           return
         }
@@ -196,11 +194,17 @@ export const atomWithAspida = <E extends AspidaEntry>(
   const useAspidaQuery: UseAspidaQuery<E> = (options) => {
     const { keepPrevious = false } = options || {}
 
-    return useBaseQuery({ keepPrevious }) as any
+    return queryState.useQuery({ keepPrevious }) as any
+  }
+
+  const useAspidaQueryLoadable: UseAspidaQueryLoadable<E> = (options) => {
+    const { keepPrevious = false } = options || {}
+
+    return queryState.useQueryLoadable({ keepPrevious }) as any
   }
 
   const useAspidaMutation: UseAspidaMutation<E> = (mutationOption) => {
-    const baseGetApi = useBaseQueryMutation()
+    const baseGetApi = queryState.useMutation()
 
     const getApi = {
       ...baseGetApi,
@@ -285,7 +289,9 @@ export const atomWithAspida = <E extends AspidaEntry>(
   }
 
   return {
-    query: [queryState, useAspidaQuery],
-    mutation: [useAspidaMutation],
+    data: queryState.data,
+    useQuery: useAspidaQuery,
+    useQueryLoadable: useAspidaQueryLoadable,
+    useMutation: useAspidaMutation,
   }
 }

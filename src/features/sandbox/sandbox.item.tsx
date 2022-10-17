@@ -1,22 +1,21 @@
 import { AccordionPanel, Button } from '@chakra-ui/react'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { TextSuspence } from '@/components/TextSuspence'
-import { sandboxSubjectsState } from '@/features/sandbox/sandbox.root'
+import { sandBoxSubjectList } from '@/features/sandbox/sandbox.root'
 import { aspida } from '@/lib/aspida'
 import { usePromise } from '@/lib/recoil/integrations/aspida/utils/usePromise'
 import { atomWithQueryFamily } from '@/lib/recoil/integrations/query/atomWithQuery/atomWithQuery'
 
-const {
-  query: [state, useSandboxSubjectItem],
-  mutation: [_, useSandboxSubjectItemMutation],
-} = atomWithQueryFamily({
+const subjectQuery = atomWithQueryFamily({
   query: (id: number) => () => {
     return aspida.api.v1.subjects._subjectId(id).$get()
   },
   mutations: (id) => {
     return {
       log: (s) => (obj) => {
-        const current = s.snapshot.getLoadable(state(id)).getValue()
+        const current = s.snapshot
+          .getLoadable(subjectQuery.query(id))
+          .getValue()
 
         console.log({ param: id, current, obj: JSON.stringify(obj) })
       },
@@ -25,7 +24,7 @@ const {
           body: { id },
         })
 
-        cb.reset(sandboxSubjectsState)
+        cb.reset(sandBoxSubjectList.query)
       },
     }
   },
@@ -53,12 +52,12 @@ export const SandboxSubjectItem: React.FC<Props> = (props) => {
 const Comp: React.FC<Props> = (props) => {
   const { subjectId } = props
 
-  const subject = useSandboxSubjectItem({
+  const subject = subjectQuery.useQueryLoadable({
     param: subjectId,
     keepPrevious: false,
   })
 
-  const { refetch, log, callDelete } = useSandboxSubjectItemMutation(subjectId)
+  const { refetch, log, callDelete } = subjectQuery.useMutation(subjectId)
   const deleteApi = usePromise(callDelete)
 
   if (subject.state === 'hasError') {

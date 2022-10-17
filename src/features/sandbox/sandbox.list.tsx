@@ -10,10 +10,10 @@ import React from 'react'
 import type { Subject } from 'api/api/v1/subjects'
 import { ErrorDump } from '@/components/ErrorDump/ErrorDump'
 import { SandboxSubjectItem } from '@/features/sandbox/sandbox.item'
-import { useSandboxSubjects } from '@/features/sandbox/sandbox.root'
+import { sandBoxSubjectList } from '@/features/sandbox/sandbox.root'
 
 export const SandboxSubjectList: React.FC = () => {
-  const subjects = useSandboxSubjects({ keepPrevious: true })
+  const subjects = sandBoxSubjectList.useQueryLoadable({ keepPrevious: true })
 
   if (subjects.state === 'hasError') {
     return <ErrorDump error={subjects.errorMaybe()} />

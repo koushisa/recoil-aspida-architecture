@@ -15,19 +15,18 @@ type PostInput = MutationOption<Subject[]> & {
 
 type ReloadInput = { name: string | undefined }
 
-export const {
-  query: [sandboxSubjectsState, useSandboxSubjects],
-  mutation: [sandboxSubjectsMutation, useSandboxSubjectsMutation],
-} = atomWithQuery({
+export const sandBoxSubjectList = atomWithQuery({
   key: 'sandboxSubjects',
   query: (opts) => {
     return aspida.api.v1.subjects.$get()
   },
   mutations: {
-    log: (cb) => (obj) => {
-      const current = cb.snapshot.getLoadable(sandboxSubjectsState).getValue()
+    log: (cb) => (extraObj) => {
+      const current = cb.snapshot
+        .getLoadable(sandBoxSubjectList.query)
+        .getValue()
 
-      console.log({ current, obj: JSON.stringify(obj) })
+      console.log({ current, extraObj: JSON.stringify(extraObj) })
     },
     reload:
       (cb) =>
@@ -38,7 +37,7 @@ export const {
           },
         })
 
-        cb.set(sandboxSubjectsState, res)
+        cb.set(sandBoxSubjectList.query, res)
 
         return res
       },
@@ -46,7 +45,7 @@ export const {
       const { body, ...option } = input
 
       cb.snapshot
-        .getLoadable(sandboxSubjectsMutation)
+        .getLoadable(sandBoxSubjectList.mutation)
         .getValue()
         .mutate({
           ...option,
@@ -65,7 +64,7 @@ export const {
  * atomWithAspidaと比較するとpostなどの処理を自分で定義する分のボイラープレートは増える
  */
 export const SandboxSubjectRoot: React.FC = () => {
-  const { log, refetch } = useSandboxSubjectsMutation()
+  const { log, refetch } = sandBoxSubjectList.useMutation()
 
   return (
     <>
@@ -82,7 +81,7 @@ export const SandboxSubjectRoot: React.FC = () => {
       <Box padding={4}>
         <SandboxSubjectFilter />
         <Button onClick={refetch}>refetch</Button>
-        <Button onClick={log}>log current state</Button>
+        <Button onClick={() => log({ hoge: 'hoge' })}>log current state</Button>
 
         <AppSpinnerSuspence>
           <SandboxSubjectList />

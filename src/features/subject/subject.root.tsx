@@ -7,10 +7,7 @@ import { SubjectList } from '@/features/subject/subject.list'
 import { aspida } from '@/lib/aspida'
 import { atomWithAspida } from '@/lib/recoil/integrations/aspida/atomWithAspida'
 
-export const {
-  query: [subjectListState, useSubjects],
-  mutation: [useSubjectsMutation],
-} = atomWithAspida({
+export const subjectListQuery = atomWithAspida({
   entry({ get }) {
     return aspida.api.v1.subjects
   },

@@ -3,7 +3,7 @@ import type React from 'react'
 import type { SubmitErrorHandler, SubmitHandler } from 'react-hook-form'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
 import { createRHFContext } from '@/components/Form/shared/BaseInput'
-import { useSandboxSubjectsMutation } from '@/features/sandbox/sandbox.root'
+import { sandBoxSubjectList } from '@/features/sandbox/sandbox.root'
 
 type Form = {
   name: string
@@ -14,7 +14,7 @@ type Form = {
 const [useSubjectForm, withFormProvider] = createRHFContext<Form>()
 
 export const SandboxSubjectForm = withFormProvider(() => {
-  const { post: postApi, log } = useSandboxSubjectsMutation()
+  const { post: postApi, log } = sandBoxSubjectList.useMutation()
   const form = useSubjectForm()
   const [isOptimistic, setIsOptimistic] = useState(false)
 

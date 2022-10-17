@@ -2,7 +2,7 @@ import { Button } from '@chakra-ui/react'
 import React from 'react'
 import { useForm } from 'react-hook-form'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
-import { useSubjectsMutation } from '@/features/subject/subject.root'
+import { subjectListQuery } from '@/features/subject/subject.root'
 
 type Filter = {
   name: string | undefined
@@ -18,7 +18,7 @@ export const SubjectFilter: React.FC = () => {
   })
   const { control, handleSubmit } = form
 
-  const { getApi } = useSubjectsMutation()
+  const { getApi } = subjectListQuery.useMutation()
 
   const onClickFilter = handleSubmit((data) => {
     getApi.reload(data)
