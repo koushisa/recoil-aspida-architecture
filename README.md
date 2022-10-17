@@ -1,11 +1,11 @@
-PoC of [Recoil](https://github.com/facebookexperimental/Recoil) and [Aspida](https://github.com/aspida/aspida) integration that is managing (ServerState | cache) in data-flow-graph.
+Proof of concept for [Recoil](https://github.com/facebookexperimental/Recoil) and [Aspida](https://github.com/aspida/aspida) integration that is managing (ServerState | cache) in data-flow-graph.
 
 Zenn's Scrap: https://zenn.dev/link/comments/c762aa47242900
 
 This architecture is opinionated, but intended to scalable 
 - cache based state management
-- co-location based structure
-- Render As Fetch Pattern for asynchronious data
+- feature sliced structure
+- Render as you fetch Pattern for asynchronious data
 
 Sample code includes some features for explanation.
 
