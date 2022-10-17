@@ -187,6 +187,24 @@ const usersQuery = atomWithAspida({
     get:({ get }) => createUsersDomainModel(get(usersQuery.data))
   })
   ```
+- map response on Component
+  - useQueryLoadable returns [Recoil Loadable](https://recoiljs.org/docs/api-reference/core/Loadable/). just use `Loadable.map`.
+  ```tsx
+  export const usersQuery = atomWithAspida(/*~*/)
+  
+  /*~*/
+  
+  const users = usersQuery.useQueryLoadable().map(users => {
+    return {
+      data: users,
+      count: users.length
+    }
+  }).getValue()
+  
+  // mapped
+  users.data 
+  users.count
+  ```
   
 
 ### Mutation
