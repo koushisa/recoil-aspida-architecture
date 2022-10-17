@@ -41,12 +41,20 @@ yarn install
 yarn dev
 ```
 
+## Motivation
+
+- As the product grows, the GUI becomes more complex 
+- in these cases.
+  - application requires more business logic.
+  - REST API + tanstack query lacks domain modeling in these cases.
+  - tanstack query does not support URL persistence, etc.
+  - Sometimes you want to have an abstraction on the data fetch layer
+
 ## Features
 
 - Declaratively construct a dependency tree
-- Encapsulate the management of server state, cache
+- Encapsulate and less boilerplate the server state management code, cache
 - Simple and type-safe API call like RPC
-
 
 ```tsx
 const usersQuery = atomWithAspida({
