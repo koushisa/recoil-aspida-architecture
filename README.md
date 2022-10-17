@@ -5,7 +5,7 @@ Zenn's Scrap: https://zenn.dev/link/comments/c762aa47242900
 This architecture is opinionated, but intended to scalable 
 - cache based state management
 - feature sliced structure
-- Render as you fetch Pattern for asynchronious data
+- Render as you fetch pattern for asynchronious data
 
 Sample code includes some features for explanation.
 
