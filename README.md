@@ -212,6 +212,7 @@ const usersQuery = atomWithAspida({
 - [Mutation sample](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.form.tsx#L20-L29)
 - [Custom mutation sample](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/sandbox/sandbox.root.tsx#L23-L56)
 - [Optimistic update sample](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.form.tsx#L52-L64)
+- [Delete item then refetch list](https://github.com/koushisa/recoil-aspida-architecture/blob/a638ec1dbf8969567d402345c8a904dcb210e8b3/src/features/subject/subject.item.tsx#L37-L41)
 
 ### props-based api call
 
