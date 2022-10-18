@@ -215,11 +215,12 @@ const usersQuery = atomWithAspida({
 
 ### props-based api call
 
+- `useAtomWithAspida`
+  - [component](https://github.com/koushisa/recoil-aspida-architecture/blob/c2712510df1c8ee534a682558874f6cab4210528/src/features/subject/subject.item.tsx#L28-L43)
 - `atomWithFamily`
   - [defs](https://github.com/koushisa/recoil-aspida-architecture/blob/c2712510df1c8ee534a682558874f6cab4210528/src/features/sandbox/sandbox.item.tsx#L9-L31)
   - [component](https://github.com/koushisa/recoil-aspida-architecture/blob/c2712510df1c8ee534a682558874f6cab4210528/src/features/sandbox/sandbox.item.tsx#L55-L58)
-- `useAtomWithAspida `
-  - [component](https://github.com/koushisa/recoil-aspida-architecture/blob/c2712510df1c8ee534a682558874f6cab4210528/src/features/subject/subject.item.tsx#L28-L43)
+
 
 ## Utility 
 
