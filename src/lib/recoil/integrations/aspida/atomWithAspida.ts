@@ -23,6 +23,7 @@ import { nanoid } from '@/lib/nanoid'
 import { isUpdater } from '@/lib/recoil/integrations/aspida/utils/isUpdater'
 import { usePromise } from '@/lib/recoil/integrations/aspida/utils/usePromise'
 import { atomWithQuery } from '@/lib/recoil/integrations/query/atomWithQuery/atomWithQuery'
+import { useConstant } from '@/lib/useConstant'
 
 export type AtomWithAspidaArgs<E extends AspidaEntry> = {
   entry: ReadOnlySelectorOptions<E>['get']
@@ -294,4 +295,12 @@ export function atomWithAspida<E extends AspidaEntry>(
     useQueryLoadable: useAspidaQueryLoadable,
     useMutation: useAspidaMutation,
   }
+}
+
+export function useAtomWithAspida<E extends AspidaEntry>(
+  args: AtomWithAspidaArgs<E> & { key: string }
+): AtomWithAspidaResult<E> {
+  const { key, ...delegatedProps } = args
+
+  return useConstant(key, () => atomWithAspida(delegatedProps))
 }
