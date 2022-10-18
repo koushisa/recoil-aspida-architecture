@@ -230,7 +230,7 @@ const usersQuery = atomWithAspida({
 - [src](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/lib/recoil/integrations/aspida/atomWithAspida.ts#L40)
 - [component](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.root.tsx#L10-L19)
 
-## `useAtomWithAspida`
+### useAtomWithAspida
 
 - [src](https://github.com/koushisa/recoil-aspida-architecture/blob/c2712510df1c8ee534a682558874f6cab4210528/src/lib/recoil/integrations/aspida/atomWithAspida.ts#L300-L306)
 - [component](https://github.com/koushisa/recoil-aspida-architecture/blob/1ffae08266781bb47fc237249364e693f957f39a/src/features/subject/subject.item.tsx#L28-L43)
