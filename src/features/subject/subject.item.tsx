@@ -32,7 +32,6 @@ const Comp: React.FC<Props> = ({ subjectId }) => {
     },
   })
 
-  const { getApi } = subjectItemQuery.useMutation()
   const listMutation = subjectListQuery.useMutation()
   const { deleteApi } = subjectItemQuery.useMutation({
     onSuccess: () => {
@@ -41,6 +40,7 @@ const Comp: React.FC<Props> = ({ subjectId }) => {
   })
 
   const subject = subjectItemQuery.useQueryLoadable()
+  const { getApi } = subjectItemQuery.useMutation()
 
   if (subject.state === 'hasError') {
     return (
