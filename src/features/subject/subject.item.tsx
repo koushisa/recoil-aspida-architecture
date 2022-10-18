@@ -3,25 +3,7 @@ import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { TextSuspence } from '@/components/TextSuspence'
 import { subjectListQuery } from '@/features/subject/subject.root'
 import { aspida } from '@/lib/aspida'
-import { usePromise } from '@/lib/recoil/integrations/aspida/utils/usePromise'
-import { atomWithQueryFamily } from '@/lib/recoil/integrations/query/atomWithQuery/atomWithQuery'
-
-const subjectQuery = atomWithQueryFamily({
-  query: (id: number) => () => {
-    return aspida.api.v1.subjects._subjectId(id).$get()
-  },
-  mutations: (id) => {
-    return {
-      callDelete: (cb) => async () => {
-        await aspida.api.v1.subjects._subjectId(id).$delete({
-          body: { id },
-        })
-
-        cb.reset(subjectListQuery.data)
-      },
-    }
-  },
-})
+import { useAtomWithAspida } from '@/lib/recoil/integrations/aspida/atomWithAspida'
 
 const BODY_HEIGHT = 120
 
@@ -42,16 +24,23 @@ export const SubjectItem: React.FC<Props> = (props) => {
   )
 }
 
-const Comp: React.FC<Props> = (props) => {
-  const { subjectId } = props
-
-  const subject = subjectQuery.useQueryLoadable({
-    param: subjectId,
-    keepPrevious: false,
+const Comp: React.FC<Props> = ({ subjectId }) => {
+  const subjectItemQuery = useAtomWithAspida({
+    key: `SubjectItem/${subjectId}`,
+    entry: () => {
+      return aspida.api.v1.subjects._subjectId(subjectId)
+    },
   })
 
-  const { refetch, callDelete } = subjectQuery.useMutation(subjectId)
-  const deleteApi = usePromise(callDelete)
+  const { getApi } = subjectItemQuery.useMutation()
+  const listMutation = subjectListQuery.useMutation()
+  const { deleteApi } = subjectItemQuery.useMutation({
+    onSuccess: () => {
+      listMutation.getApi.refetch()
+    },
+  })
+
+  const subject = subjectItemQuery.useQueryLoadable()
 
   if (subject.state === 'hasError') {
     return (
@@ -66,8 +55,10 @@ const Comp: React.FC<Props> = (props) => {
   return (
     <AccordionPanel height={BODY_HEIGHT}>
       <FormStatus formStatus={deleteApi} />
-      <Button onClick={refetch}>refetch</Button>
-      <Button onClick={() => deleteApi.call()}>delete</Button>
+      <Button onClick={getApi.refetch}>refetche</Button>
+      <Button onClick={() => deleteApi.call({ body: { id: subjectId } })}>
+        delete
+      </Button>
       <pre>{subject.getValue().description}</pre>
     </AccordionPanel>
   )
