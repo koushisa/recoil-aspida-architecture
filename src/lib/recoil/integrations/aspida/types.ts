@@ -148,7 +148,7 @@ type DeleteApi<E extends AspidaEntry> = E extends {
 }
   ? DeleteAction extends AnyPromiseFunc
     ? {
-        patchApi: MutationMeta & {
+        deleteApi: MutationMeta & {
           call: (
             payload: Parameters<DeleteAction>[0] &
               MutationOptions<GetApiReturn<E>>
