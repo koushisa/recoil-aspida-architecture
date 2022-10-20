@@ -2,12 +2,12 @@ Proof of concept for [Recoil](https://github.com/facebookexperimental/Recoil) an
 
 Zenn's Scrap: https://zenn.dev/link/comments/c762aa47242900
 
-This architecture is opinionated, but intended to scalable 
+This architecture is opinionated, but intended to scalable and safely. 
 - cache based state management
 - feature sliced structure
 - Render as you fetch pattern for asynchronious data
 
-Sample code includes some features for explanation.
+Sample code includes some features.
 
 - Create, Read, Delete (Update is coming soon)
 - Custom mutations that is defined in data-flow-graph
@@ -127,6 +127,8 @@ const { call, error, pending, success } = patchApi
 ## Recipes
 
 You can access any Recoil nodes in atomWithAspida's callback.
+
+[Here is Sample](https://github.com/koushisa/recoil-aspida-architecture/blob/648fa494b3ff71c0466df0f203b96a1d2a7e9f79/src/features/subject/subject.root.tsx#L10-L19)
 
 ### Construct dependency 
 
