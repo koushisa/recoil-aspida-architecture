@@ -26,7 +26,7 @@ export const StudentList: React.FC = () => {
     .getValue()
 
   // refetch every second
-  const reset = useResetRecoilState(studentListQuery.query)
+  const reset = useResetRecoilState(studentListQuery.data)
   useInterval(reset, 1000, false)
 
   return (
