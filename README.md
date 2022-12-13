@@ -181,7 +181,11 @@ const usersQuery = atomWithAspida({
 - Derrived state
   - `data` is derivable in the same way as usual `RecoilState`
   ```tsx
+  import { keyBy} from "lodash" 
+  import { createUsersDomainModel } ./ 'logics'
+  
   export const usersQuery = atomWithAspida(/*~*/)
+  
   
   // dictionary
   const usersById = selector({
