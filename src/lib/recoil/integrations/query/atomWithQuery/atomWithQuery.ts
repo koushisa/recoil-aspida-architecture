@@ -11,6 +11,7 @@ import {
   atomFamily,
   SerializableParam,
   RecoilLoadable,
+  waitForAllSettled,
 } from 'recoil'
 import type {
   UseAtomWithQueryOptions,
@@ -137,15 +138,23 @@ export function atomWithQueryFamily<
   const [mutation] = callbackAtomFamily((param: P) => ({
     ...delegatedMutations?.(param),
 
-    prefetch:
+    waitForSettled:
       ({ snapshot }) =>
-      () => {
-        return snapshot.getPromise(state(param))
+      async () => {
+        const [data] = await snapshot.getPromise(
+          waitForAllSettled([state(param)])
+        )
+        return data.getValue()
       },
     refetch:
-      ({ reset }) =>
-      () => {
+      ({ snapshot, reset }) =>
+      async () => {
         reset(state(param))
+
+        const [data] = await snapshot.getPromise(
+          waitForAllSettled([state(param)])
+        )
+        return data.getValue()
       },
     mutate: (cb) => (option: MutateOption<T>) => {
       const { mutationFn, ...delegatedOption } = option

@@ -53,9 +53,9 @@ export type GetApiObj<
   Return = GetApiReturn<E>
 > = {
   call: (query: SetterOrUpdater<QueryParameter>) => Promise<Return>
-  reload: (query: SetterOrUpdater<QueryParameter>) => void
-  refetch: () => void
-  prefetch: () => Promise<void>
+  reload: (query: SetterOrUpdater<QueryParameter>) => Promise<Return>
+  refetch: () => Promise<Return>
+  waitForSettled: () => Promise<void>
 }
 
 export type MutationOptions<T> = {

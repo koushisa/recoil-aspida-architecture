@@ -141,6 +141,10 @@ export function atomWithAspida<E extends AspidaEntry>(
       },
 
       reload: (callback) => async (query) => {
+        const { waitForSettled } = await callback.snapshot.getPromise(
+          queryState.mutation
+        )
+
         if (!isQueryInitialized) {
           const option = callback.snapshot.getLoadable(optionState).getValue()
           const newOption = {
@@ -159,13 +163,15 @@ export function atomWithAspida<E extends AspidaEntry>(
           callback.set(optionState, newOption)
           callback.set(queryState.data, res)
 
-          return
+          return waitForSettled()
         }
 
         callback.set(optionState, (current) => ({
           ...current,
           query: isUpdater(query) ? query(current.query) : query,
         }))
+
+        return waitForSettled()
       },
     },
   })

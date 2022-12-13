@@ -17,8 +17,8 @@ type BaseOptions = {
 }
 
 type BaseMutations<T> = {
-  prefetch: (cb: CallbackInterface) => () => Promise<T>
-  refetch: (cb: CallbackInterface) => () => void
+  waitForSettled: (cb: CallbackInterface) => () => Promise<T>
+  refetch: (cb: CallbackInterface) => () => Promise<T>
   mutate: (cb: CallbackInterface) => (option: MutateOption<T>) => Promise<T>
 }
 
