@@ -1,6 +1,8 @@
 Proof of concept for [Recoil](https://github.com/facebookexperimental/Recoil) and [Aspida](https://github.com/aspida/aspida) integration that is managing (ServerState | cache) in data-flow-graph.
 
-Zenn's Scrap: https://zenn.dev/link/comments/c762aa47242900
+Scraps for info
+- https://zenn.dev/link/comments/c762aa47242900
+- https://scrapbox.io/koushisa/atomWithAspida
 
 This architecture is opinionated, but intended to scalable and safely. 
 - cache based state management
@@ -75,7 +77,7 @@ const usersQuery = atomWithAspida({
 
 ---
 usersQuery.data // atom 
-usersQuery.mutation //  getCallback
+usersQuery.mutation // selector (getCallback)
 usersQuery.useQuery 
 usersQuery.useQueryLoadable
 usersQuery.useMutation
@@ -95,12 +97,16 @@ const UserActions = () => {
   const { getApi, postApi, patchApi, ...etc } = usersQuery.useMutation()
   
   // abstraction of aspida.api.users.$get()
-  const { prefetch, refetch, reload } = getApi
+  const { waitForSettled, refetch, reload } = getApi
 
-  getApi.prefetch()
-  getApi.refetch()
-  getApi.reload({ name: 'foo' }) // declarative api call. it will update `usersQuery.data`.
-  const response = getApi.call({ name: 'foo' }) // imperative api call. it won't update state.
+  // If `usersQuery.data` is suspended, wait until it is resolved.
+  getApi.waitForSettled() 
+  // refetch with current parameters.
+  getApi.refetch() 
+  // refetch with new parameter.
+  getApi.reload({ name: 'foo' }) 
+  // imperative api call. it won't update state.
+  const response = getApi.call({ name: 'foo' })
 
   // abstraction of aspida.api.users.$post()
   const { error, pending, success } = postApi
