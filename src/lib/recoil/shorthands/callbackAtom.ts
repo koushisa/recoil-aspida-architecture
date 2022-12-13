@@ -60,9 +60,7 @@ export const callbackAtomFamily = <
                   throw new Error(`callbackAtom: ${key} is not defined`)
                 }
 
-                cb.snapshot.retain()
-
-                func({ ...cb, snapshot: cb.snapshot })(...args)
+                func(cb)(...args)
               }
           )
 
