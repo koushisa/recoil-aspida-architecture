@@ -23,7 +23,7 @@ export const sandBoxSubjectList = atomWithQuery({
   mutations: {
     log: (cb) => (extraObj) => {
       const current = cb.snapshot
-        .getLoadable(sandBoxSubjectList.query)
+        .getLoadable(sandBoxSubjectList.data)
         .getValue()
 
       console.log({ current, extraObj: JSON.stringify(extraObj) })
@@ -37,7 +37,7 @@ export const sandBoxSubjectList = atomWithQuery({
           },
         })
 
-        cb.set(sandBoxSubjectList.query, res)
+        cb.set(sandBoxSubjectList.data, res)
 
         return res
       },
