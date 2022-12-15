@@ -2,9 +2,10 @@
 
 import React from 'react'
 
+// maybe LRU Cache has better performance
+// https://github.com/isaacs/node-lru-cache
 const cache = new Map()
 
-/** TODO: avoid memory leak */
 export function useConstant<T>(key: string, fn: () => T): T {
   const ref = React.useRef<T>()
 
