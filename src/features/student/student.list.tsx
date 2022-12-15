@@ -9,7 +9,7 @@ import React from 'react'
 import { useResetRecoilState } from 'recoil'
 import { aspida } from '@/lib/aspida'
 import { atomWithAspida } from '@/lib/recoil/integrations/aspida/atomWithAspida'
-import useInterval from '@/lib/recoil/integrations/query/atomWithQuery/utils/useInterval'
+import useInterval from '@/lib/useInterval'
 
 const studentListQuery = atomWithAspida({
   entry({ get }) {

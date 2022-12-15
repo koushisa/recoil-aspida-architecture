@@ -179,7 +179,6 @@ export function atomWithQueryFamily<
     return query
   }
 
-  // use state with Loadable and cache invalidation
   const useQueryLoadable = (options: UseAtomWithQueryFamilyOptions<P>) => {
     const { param, keepPrevious = false } = options
 
