@@ -1,8 +1,10 @@
 import type { SetterOrUpdater } from '@/lib/recoil/integrations/aspida/utils/isUpdater'
 import type { SpreadTwo } from '@/lib/recoil/integrations/aspida/utils/SpreadTwo'
-import type { UseAtomWithQueryOptions } from '@/lib/recoil/integrations/query/atomWithQuery/types'
-
-import type { Loadable, RecoilState } from 'recoil'
+import type {
+  AtomWithQueryResult,
+  UseAtomWithQueryOptions,
+} from '@/lib/recoil/integrations/query/atomWithQuery/types'
+import type { CallbackInterface, Loadable, RecoilState } from 'recoil'
 
 export type AnyPromiseFunc = (...option: any) => Promise<any>
 
@@ -57,6 +59,22 @@ export type GetApiObj<
   refetch: () => Promise<Return>
   waitForSettled: () => Promise<void>
 }
+
+export type QueryState<
+  E extends AspidaEntry,
+  Return = GetApiReturn<E>,
+  QueryParameter = GetApiOption<E>['query']
+> = AtomWithQueryResult<
+  Return,
+  {
+    call: (
+      cb: CallbackInterface
+    ) => (query: SetterOrUpdater<QueryParameter>) => Promise<Return>
+    reload: (
+      cb: CallbackInterface
+    ) => (query: SetterOrUpdater<QueryParameter>) => Promise<Return>
+  }
+>
 
 export type MutationOptions<T> = {
   rollbackOnError?: boolean

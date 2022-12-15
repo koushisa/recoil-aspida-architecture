@@ -18,7 +18,9 @@ import type {
   AtomWithAspidaResult,
   UseAspidaQuery,
   UseAspidaQueryLoadable,
+  QueryState,
 } from '@/lib/recoil/integrations/aspida/types'
+
 import { nanoid } from '@/lib/nanoid'
 import { isUpdater } from '@/lib/recoil/integrations/aspida/utils/isUpdater'
 import { usePromise } from '@/lib/recoil/integrations/aspida/utils/usePromise'
@@ -99,7 +101,7 @@ export function atomWithAspida<E extends AspidaEntry>(
     ],
   })
 
-  const queryState = atomWithQuery({
+  const queryState: QueryState<E> = atomWithQuery({
     key: `${key}/queryState`,
     query: (opts) => {
       const { get } = opts
@@ -123,6 +125,9 @@ export function atomWithAspida<E extends AspidaEntry>(
 
       return api.$get(apiOption)
     },
+    // `BaseMutations` from atomWithQuery is not needed in here
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
     mutations: {
       call: (callback) => async (query) => {
         const option = callback.snapshot.getLoadable(optionState).getValue()
