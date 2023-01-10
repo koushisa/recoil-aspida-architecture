@@ -15,7 +15,7 @@ Sample code includes some features.
 - Custom mutations that is defined in data-flow-graph
   - Optimistic Update
   - Automated Refetching
-- Suspence based loading
+- Suspense
 - Skeleton screen
 - Form is created by [react-hook-form](https://github.com/react-hook-form/react-hook-form)
   - wrapper: https://github.com/koushisa/recoil-aspida-sample/tree/main/src/components/Form/shared/BaseInput
