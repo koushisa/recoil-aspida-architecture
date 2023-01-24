@@ -8,33 +8,27 @@ import {
   Button,
 } from '@chakra-ui/react'
 import React from 'react'
-import type { Subject } from 'api/api/v1/subjects'
 import { ErrorDump } from '@/components/ErrorDump/ErrorDump'
 import { AppSpinner } from '@/components/Spinner/Spinner'
-import { AntiSubjectQuery } from '@/features/subject__anti/anti.hooks'
-import { AntiSubjectItem } from '@/features/subject__anti/anti.item'
+import { RQSubjectQuery } from '@/features/subject__rq/rq.hooks'
+import { RQSubjectItem } from '@/features/subject__rq/rq.item'
 
-export const AntiSubjectList: React.FC = () => {
-  const { data = [], isLoading, error, refetch } = AntiSubjectQuery.useList()
+type RQSubjectListProps = {
+  onItemDeleted: () => void
+}
+
+export const RQSubjectList: React.FC<RQSubjectListProps> = ({
+  onItemDeleted,
+}) => {
+  const { data = [], isLoading, error, refetch } = RQSubjectQuery.useList()
 
   if (isLoading) return <AppSpinner />
   if (error) return <ErrorDump error={error} />
 
   return (
     <>
-      {/* refetchがuseQueryに紐付いている */}
       <Button onClick={() => refetch()}>refetch</Button>
-      <List subjects={data} />
-    </>
-  )
-}
-
-const List: React.FC<{
-  subjects: Subject[]
-}> = ({ subjects }) => {
-  return (
-    <>
-      {subjects.map((sub) => (
+      {data.map((sub) => (
         <Accordion key={sub.id} allowToggle>
           <AccordionItem>
             {({ isExpanded }) => (
@@ -53,7 +47,12 @@ const List: React.FC<{
                   </AccordionButton>
                 </h2>
 
-                {isExpanded ? <AntiSubjectItem subjectId={sub.id} /> : null}
+                {isExpanded ? (
+                  <RQSubjectItem
+                    subjectId={sub.id}
+                    onItemDeleted={onItemDeleted}
+                  />
+                ) : null}
               </>
             )}
           </AccordionItem>

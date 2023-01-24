@@ -1,6 +1,6 @@
 import { AccordionPanel, Button } from '@chakra-ui/react'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
-import { TextSuspence } from '@/components/TextSuspense'
+import { TextSuspense } from '@/components/TextSuspense'
 import { sandBoxSubjectList } from '@/features/sandbox/sandbox.root'
 import { aspida } from '@/lib/aspida'
 import { usePromise } from '@/lib/recoil/integrations/aspida/utils/usePromise'
@@ -13,9 +13,7 @@ const subjectQuery = atomWithQueryFamily({
   mutations: (id) => {
     return {
       log: (s) => (obj) => {
-        const current = s.snapshot
-          .getLoadable(subjectQuery.query(id))
-          .getValue()
+        const current = s.snapshot.getLoadable(subjectQuery.data(id)).getValue()
 
         console.log({ param: id, current, obj: JSON.stringify(obj) })
       },
@@ -24,7 +22,7 @@ const subjectQuery = atomWithQueryFamily({
           body: { id },
         })
 
-        cb.reset(sandBoxSubjectList.query)
+        cb.reset(sandBoxSubjectList.data)
       },
     }
   },
@@ -38,14 +36,14 @@ type Props = {
 
 export const SandboxSubjectItem: React.FC<Props> = (props) => {
   return (
-    <TextSuspence
+    <TextSuspense
       boxProps={{
         padding: '4',
         height: BODY_HEIGHT,
       }}
       skeletonTextProps={{ noOfLines: 4 }}>
       <Comp {...props} />
-    </TextSuspence>
+    </TextSuspense>
   )
 }
 

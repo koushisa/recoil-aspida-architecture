@@ -1,7 +1,7 @@
 import { AccordionPanel, Button } from '@chakra-ui/react'
+import { ErrorDump } from '@/components/ErrorDump/ErrorDump'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
 import { TextSuspense } from '@/components/TextSuspense'
-import { subjectListQuery } from '@/features/subject/subject.root'
 import { aspida } from '@/lib/aspida'
 import { useAtomWithAspida } from '@/lib/recoil/integrations/aspida/atomWithAspida'
 
@@ -9,6 +9,7 @@ const BODY_HEIGHT = 120
 
 type Props = {
   subjectId: number
+  onItemDeleted: () => void
 }
 
 export const SubjectItem: React.FC<Props> = (props) => {
@@ -19,12 +20,12 @@ export const SubjectItem: React.FC<Props> = (props) => {
         height: BODY_HEIGHT,
       }}
       skeletonTextProps={{ noOfLines: 4 }}>
-      <Comp {...props} />
+      <Item {...props} />
     </TextSuspense>
   )
 }
 
-const Comp: React.FC<Props> = ({ subjectId }) => {
+const Item: React.FC<Props> = ({ subjectId, onItemDeleted }) => {
   const subjectItemQuery = useAtomWithAspida({
     key: `SubjectItem/${subjectId}`,
     entry: () => {
@@ -32,22 +33,18 @@ const Comp: React.FC<Props> = ({ subjectId }) => {
     },
   })
 
-  const listMutation = subjectListQuery.useMutation()
+  const subjectItem = subjectItemQuery.useQueryLoadable()
+  const { getApi } = subjectItemQuery.useMutation()
   const { deleteApi } = subjectItemQuery.useMutation({
     onSuccess: () => {
-      listMutation.getApi.refetch()
+      onItemDeleted()
     },
   })
 
-  const subject = subjectItemQuery.useQueryLoadable()
-  const { getApi } = subjectItemQuery.useMutation()
-
-  if (subject.state === 'hasError') {
+  if (subjectItem.state === 'hasError') {
     return (
       <AccordionPanel height={BODY_HEIGHT}>
-        <pre style={{ maxHeight: 100, overflow: 'auto' }}>
-          {JSON.stringify(subject.errorMaybe(), null, 2)}
-        </pre>
+        <ErrorDump error={subjectItem.errorMaybe()} />
       </AccordionPanel>
     )
   }
@@ -55,11 +52,11 @@ const Comp: React.FC<Props> = ({ subjectId }) => {
   return (
     <AccordionPanel height={BODY_HEIGHT}>
       <FormStatus formStatus={deleteApi} />
-      <Button onClick={getApi.refetch}>refetche</Button>
+      <Button onClick={getApi.refetch}>refetch</Button>
       <Button onClick={() => deleteApi.call({ body: { id: subjectId } })}>
         delete
       </Button>
-      <pre>{subject.getValue().description}</pre>
+      <pre>{subjectItem.getValue().description}</pre>
     </AccordionPanel>
   )
 }

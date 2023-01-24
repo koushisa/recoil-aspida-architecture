@@ -55,14 +55,6 @@ export const sandBoxSubjectList = atomWithQuery({
   },
 })
 
-/**
- * atomWithQueryを利用し、キャッシュ管理ロジックをデータフローグラフに定義したパターン
- * Anti(React-Query)と比較するとキャッシュキーによる管理がなくなり、Recoilのデータフローグラフに移譲できるのが利点で大部分のボイラープレートやカスタムフックが不要となる
- * Antiで必要だったFilter用のフォームがこのパターンでは不要となるのはポイント
- * なにがどう依存しているかはデータフローグラフが全て知っている
- *
- * atomWithAspidaと比較するとpostなどの処理を自分で定義する分のボイラープレートは増える
- */
 export const SandboxSubjectRoot: React.FC = () => {
   const { log, refetch } = sandBoxSubjectList.useMutation()
 

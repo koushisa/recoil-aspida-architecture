@@ -1,33 +1,36 @@
 import { Box, Checkbox } from '@chakra-ui/react'
-import React from 'react'
-import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
+import { useQueryClient } from '@tanstack/react-query'
+import { createRHFContext } from '@/components/Form/shared/BaseInput'
 import { AppSpinnerSuspense } from '@/components/SpinnerSuspense'
-import {
-  SubjectFilterForm,
-  SubjectFilterFormProps,
-} from '@/features/subject/subject.filter'
 import { SubjectForm, SubjectFormProps } from '@/features/subject/subject.form'
 import { SubjectFormFields } from '@/features/subject/subject.form.fields'
-import { SubjectList } from '@/features/subject/subject.list'
-import { aspida } from '@/lib/aspida'
-import { atomWithAspida } from '@/lib/recoil/integrations/aspida/atomWithAspida'
+import {
+  RQSubjectFilterForm,
+  RQSubjectFilterFormProps,
+} from '@/features/subject__rq/rq.filter'
+import { RQSubjectQuery } from '@/features/subject__rq/rq.hooks'
+import { RQSubjectList } from '@/features/subject__rq/rq.list'
 
-export const subjectListQuery = atomWithAspida({
-  entry({ get }) {
-    return aspida.api.v1.subjects
-  },
-  option({ get }, currentOption) {
-    return {
-      query: currentOption.query,
-    }
-  },
-})
+export type RQSubjectFilterFormValues = {
+  name: string | undefined
+}
 
-export const SubjectRoot: React.FC = () => {
+const [useRQSubjectFilterForm, withFormProvider] =
+  createRHFContext<RQSubjectFilterFormValues>({
+    defaultValues: {
+      name: '',
+    },
+  })
+
+export { useRQSubjectFilterForm }
+
+export const RQSubjectRoot = withFormProvider(() => {
+  const filterForm = useRQSubjectFilterForm()
   const [isOptimistic, setIsOptimistic] = useState(false)
 
-  const { getApi } = subjectListQuery.useMutation()
-  const { postApi } = subjectListQuery.useMutation({
+  const queryClient = useQueryClient()
+
+  const { post, optimisticPost } = RQSubjectQuery.useMutation({
     onSuccess() {
       alert('post success')
     },
@@ -42,9 +45,8 @@ export const SubjectRoot: React.FC = () => {
       defaultValues: { name: '', description: '', disabled: false },
     },
     onValid: (body) => {
-      return postApi.call({
+      return post.mutate({
         body,
-        refetchOnSuccess: true,
       })
     },
     onInValid: (err, evt) => {
@@ -58,37 +60,33 @@ export const SubjectRoot: React.FC = () => {
 
     // optimistic update
     onValid: (body) => {
-      return postApi.call({
+      return optimisticPost.mutate({
         body,
-        refetchOnSuccess: false,
-        rollbackOnError: true,
-        optimisticData: (current) => {
-          const optData = { ...body, id: current.length + 1 }
-          return [...current, optData]
-        },
       })
     },
   }
 
-  const filterProps: SubjectFilterFormProps = {
-    formProps: {},
+  const filterProps: RQSubjectFilterFormProps = {
+    formProps: {
+      defaultValues: { name: '' },
+    },
     onValid: (body) => {
-      return getApi.reload(body)
+      filterForm.reset(body)
     },
   }
 
   const onItemDeleted = () => {
-    return getApi.refetch()
+    return queryClient.invalidateQueries([RQSubjectQuery.Keys.root])
   }
 
   return (
     <>
-      <h2>form</h2>
+      <h2>react query form</h2>
 
       <Checkbox
         checked={isOptimistic}
         onChange={(_) => {
-          setIsOptimistic(!isOptimistic)
+          setIsOptimistic((v) => !v)
         }}>
         optimistic
       </Checkbox>
@@ -101,18 +99,14 @@ export const SubjectRoot: React.FC = () => {
         )}
       </Box>
 
+      <h2>react query list</h2>
       <Box padding={4}>
-        <FormStatus formStatus={{ ...postApi }} />
-      </Box>
-
-      <h2>list</h2>
-      <Box padding={4}>
-        <SubjectFilterForm {...filterProps} />
+        <RQSubjectFilterForm {...filterProps} />
 
         <AppSpinnerSuspense>
-          <SubjectList onItemDeleted={onItemDeleted} />
+          <RQSubjectList onItemDeleted={onItemDeleted} />
         </AppSpinnerSuspense>
       </Box>
     </>
   )
-}
+})

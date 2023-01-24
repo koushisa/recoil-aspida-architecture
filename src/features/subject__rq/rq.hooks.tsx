@@ -4,39 +4,43 @@ import {
   useMutation,
   QueryFunctionContext,
 } from '@tanstack/react-query'
+import { useWatch } from 'react-hook-form'
 import type { Subject } from 'api/api/v1/subjects'
 import {
-  AntiSubjectFilterForm,
-  useAntiSubjectFilterForm,
-} from '@/features/subject__anti/anti.root'
+  RQSubjectFilterFormValues,
+  useRQSubjectFilterForm,
+} from '@/features/subject__rq/rq.root'
 import { aspida } from '@/lib/aspida'
 
 const rootPath = aspida.api.v1.subjects.$path()
 
 const fetchSubjectList = ({
   queryKey: [, filter],
-}: QueryFunctionContext<
-  ReturnType<typeof AntiSubjectQuery['Keys']['list']>
->) => {
+}: QueryFunctionContext<ReturnType<typeof RQSubjectQuery['Keys']['list']>>) => {
   return aspida.api.v1.subjects.$get({ query: filter })
 }
 
-export const AntiSubjectQuery = {
+export const RQSubjectQuery = {
   Keys: {
     root: rootPath,
-    list: (condition: AntiSubjectFilterForm) => [rootPath, condition] as const,
+    list: (condition: Partial<RQSubjectFilterFormValues>) =>
+      [rootPath, condition] as const,
     item: (subjectId: number) => [rootPath, subjectId] as const,
   },
 
   // https://tkdodo.eu/blog/leveraging-the-query-function-context#object-query-keys
 
   useListFilterKey: () => {
-    const form = useAntiSubjectFilterForm()
-    return AntiSubjectQuery.Keys.list(form.watch())
+    const { control } = useRQSubjectFilterForm()
+    const condition = useWatch({
+      control,
+    })
+
+    return RQSubjectQuery.Keys.list(condition)
   },
 
   useList: () => {
-    const listKey = AntiSubjectQuery.useListFilterKey()
+    const listKey = RQSubjectQuery.useListFilterKey()
 
     const query = useQuery(listKey, fetchSubjectList)
 
@@ -48,7 +52,7 @@ export const AntiSubjectQuery = {
     onError: (e: unknown) => void
   }) => {
     const queryClient = useQueryClient()
-    const listKey = AntiSubjectQuery.useListFilterKey()
+    const listKey = RQSubjectQuery.useListFilterKey()
 
     const post = useMutation(aspida.api.v1.subjects.$post, {
       onSuccess: () => {

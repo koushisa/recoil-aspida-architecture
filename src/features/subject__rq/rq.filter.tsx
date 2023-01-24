@@ -1,27 +1,26 @@
 import { Button } from '@chakra-ui/react'
 import React from 'react'
 import {
-  SubmitErrorHandler,
   SubmitHandler,
+  SubmitErrorHandler,
   useForm,
   UseFormProps,
 } from 'react-hook-form'
+import type { RQSubjectFilterFormValues } from '@/features/subject__rq/rq.root'
 import { ControlledInputText } from '@/components/Form/InputText/ControlledInputText'
 
-type SubjectFilterFormValues = {
-  name: string | undefined
+export type RQSubjectFilterFormProps = {
+  formProps: UseFormProps<RQSubjectFilterFormValues, any>
+  onValid: SubmitHandler<RQSubjectFilterFormValues>
+  onInValid?: SubmitErrorHandler<RQSubjectFilterFormValues> | undefined
 }
 
-export type SubjectFilterFormProps = {
-  formProps: UseFormProps<SubjectFilterFormValues, any>
-  onValid: SubmitHandler<SubjectFilterFormValues>
-  onInValid?: SubmitErrorHandler<SubjectFilterFormValues> | undefined
-}
-
-export const SubjectFilterForm: React.FC<SubjectFilterFormProps> = (props) => {
+export const RQSubjectFilterForm: React.FC<RQSubjectFilterFormProps> = (
+  props
+) => {
   const { formProps, onValid, onInValid } = props
 
-  const form = useForm<SubjectFilterFormValues>(formProps)
+  const form = useForm<RQSubjectFilterFormValues>(formProps)
   const { control, handleSubmit } = form
 
   return (

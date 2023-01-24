@@ -3,48 +3,44 @@ import {
   QueryFunctionContext,
   useMutation,
   useQuery,
-  useQueryClient,
 } from '@tanstack/react-query'
+import { ErrorDump } from '@/components/ErrorDump/ErrorDump'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
-import { TextSuspence } from '@/components/TextSuspense'
-import { AntiSubjectQuery } from '@/features/subject__anti/anti.hooks'
-
+import { TextSuspense } from '@/components/TextSuspense'
+import { RQSubjectQuery } from '@/features/subject__rq/rq.hooks'
 import { aspida } from '@/lib/aspida'
 
 type Props = {
   subjectId: number
+  onItemDeleted: () => void
 }
 
-const fetchSubjectItem = async ({
+const fetchSubjectItem = ({
   queryKey: [, subjectId],
-}: QueryFunctionContext<
-  ReturnType<typeof AntiSubjectQuery['Keys']['item']>
->) => {
-  return await aspida.api.v1.subjects._subjectId(subjectId).$get()
+}: QueryFunctionContext<ReturnType<typeof RQSubjectQuery['Keys']['item']>>) => {
+  return aspida.api.v1.subjects._subjectId(subjectId).$get()
 }
 
 const BODY_HEIGHT = 120
 
-export const AntiSubjectItem: React.FC<Props> = (props) => {
+export const RQSubjectItem: React.FC<Props> = (props) => {
   return (
-    <TextSuspence
+    <TextSuspense
       boxProps={{
         padding: '4',
         height: BODY_HEIGHT,
       }}
       skeletonTextProps={{ noOfLines: 4 }}>
-      <Comp {...props} />
-    </TextSuspence>
+      <Item {...props} />
+    </TextSuspense>
   )
 }
 
-const Comp: React.FC<Props> = (props) => {
-  const { subjectId } = props
-
-  const queryClient = useQueryClient()
+const Item: React.FC<Props> = (props) => {
+  const { subjectId, onItemDeleted } = props
 
   const query = useQuery(
-    AntiSubjectQuery.Keys.item(subjectId),
+    RQSubjectQuery.Keys.item(subjectId),
     fetchSubjectItem,
     {
       suspense: true,
@@ -55,7 +51,7 @@ const Comp: React.FC<Props> = (props) => {
     aspida.api.v1.subjects._subjectId(subjectId).$delete,
     {
       onSuccess: () => {
-        queryClient.invalidateQueries([AntiSubjectQuery.Keys.root])
+        onItemDeleted()
       },
     }
   )
@@ -63,9 +59,7 @@ const Comp: React.FC<Props> = (props) => {
   if (query.error) {
     return (
       <AccordionPanel height={BODY_HEIGHT}>
-        <pre style={{ maxHeight: 100, overflow: 'auto' }}>
-          {JSON.stringify(query.error, null, 2)}
-        </pre>
+        <ErrorDump error={query.error} />
       </AccordionPanel>
     )
   }

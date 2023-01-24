@@ -7,27 +7,24 @@ import {
   Box,
 } from '@chakra-ui/react'
 import React from 'react'
-import type { Subject } from 'api/api/v1/subjects'
 import { ErrorDump } from '@/components/ErrorDump/ErrorDump'
 import { SubjectItem } from '@/features/subject/subject.item'
 import { subjectListQuery } from '@/features/subject/subject.root'
 
-export const SubjectList: React.FC = () => {
+type SubjectListProps = {
+  onItemDeleted: () => void
+}
+
+export const SubjectList: React.FC<SubjectListProps> = ({ onItemDeleted }) => {
   const subjects = subjectListQuery.useQueryLoadable({ keepPrevious: true })
 
   if (subjects.state === 'hasError') {
     return <ErrorDump error={subjects.errorMaybe()} />
   }
 
-  return <List subjects={subjects.getValue()} />
-}
-
-const List: React.FC<{
-  subjects: Subject[]
-}> = ({ subjects }) => {
   return (
     <>
-      {subjects.map((sub) => (
+      {subjects.getValue().map((sub) => (
         <Accordion key={sub.id} allowToggle>
           <AccordionItem>
             {({ isExpanded }) => (
@@ -46,7 +43,12 @@ const List: React.FC<{
                   </AccordionButton>
                 </h2>
 
-                {isExpanded ? <SubjectItem subjectId={sub.id} /> : null}
+                {isExpanded ? (
+                  <SubjectItem
+                    subjectId={sub.id}
+                    onItemDeleted={onItemDeleted}
+                  />
+                ) : null}
               </>
             )}
           </AccordionItem>
