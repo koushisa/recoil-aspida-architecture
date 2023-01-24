@@ -50,12 +50,10 @@ yarn dev
   - application requires more business logic.
   - REST API + tanstack query lacks domain modeling in these cases.
   - tanstack query does not support URL persistence, etc.
-  - Sometimes you want to have an abstraction on the data fetch layer
-- implementation with tanstack query 
-  - dir: https://github.com/koushisa/recoil-aspida-sample/tree/main/src/features/subject__anti
-  - fmm... cache management seemed a bit redundant.
-    - https://github.com/koushisa/recoil-aspida-sample/blob/main/src/features/subject__anti/anti.hooks.tsx
-    - https://github.com/koushisa/recoil-aspida-sample/blob/9252a2d48dd8c4ff47d635eca78bcf2326769229/src/features/subject__anti/anti.item.tsx#L46-L52
+  - sometimes you want to have an abstraction on the data fetch layer
+- implementated with tanstack query 
+  - https://github.com/koushisa/recoil-aspida-architecture/tree/main/src/features/subject__rq
+  - i feel cache management seemed a bit redundant.
 
 ## Features
 
@@ -89,6 +87,9 @@ const UsersList = () => {
   
   // almout same as: useRecoilValueValueLoadable(usersQuery.data)
   const users = usersQuery.useQueryLoadable()
+  
+  // keep previous value while loading
+  const users = usersQuery.useQueryLoadable({ keepPrevious: true})
 
   return (/*~*/)
 }
@@ -134,9 +135,7 @@ const { call, error, pending, success } = patchApi
 
 You can access any Recoil nodes in atomWithAspida's callback.
 
-[Here is Sample](https://github.com/koushisa/recoil-aspida-architecture/blob/648fa494b3ff71c0466df0f203b96a1d2a7e9f79/src/features/subject/subject.root.tsx#L10-L19)
-
-### Construct dependency 
+### Dependant Fetching
 
 ```tsx
 const usersQuery = atomWithAspida({
@@ -175,9 +174,9 @@ const usersQuery = atomWithAspida({
 
 ### Manages Server State
 
-- [Use query via hooks](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.list.tsx#L15-L16)
-- [Filter sample](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.filter.tsx#L15-L25)
-- [Polling](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/student/student.list.tsx#L24-L30)
+- [Use query via hooks](https://github.com/koushisa/recoil-aspida-architecture/blob/573f9d1ee7bf8f7fe1174ab8d5cce7c3e617ca55/src/features/subject/subject.list.tsx#L18-L19)
+- [Filter sample](https://github.com/koushisa/recoil-aspida-architecture/blob/573f9d1ee7bf8f7fe1174ab8d5cce7c3e617ca55/src/features/subject/subject.root.tsx#L75-L77)
+- [Polling](https://github.com/koushisa/recoil-aspida-architecture/blob/573f9d1ee7bf8f7fe1174ab8d5cce7c3e617ca55/src/features/student/student.list.tsx#L24-L30)
 - Derrived state
   - `data` is derivable in the same way as usual `RecoilState`
   ```tsx
@@ -221,38 +220,22 @@ const usersQuery = atomWithAspida({
 
 ### Mutation
 
-- [Mutation sample](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.form.tsx#L20-L29)
-- [Custom mutation sample](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/sandbox/sandbox.root.tsx#L23-L56)
-- [Optimistic update sample](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.form.tsx#L52-L64)
-- [Delete item then refetch list](https://github.com/koushisa/recoil-aspida-architecture/blob/1ffae08266781bb47fc237249364e693f957f39a/src/features/subject/subject.item.tsx#L35-L40)
+- [Mutation sample](https://github.com/koushisa/recoil-aspida-architecture/blob/573f9d1ee7bf8f7fe1174ab8d5cce7c3e617ca55/src/features/subject/subject.root.tsx#L30-L49)
+- [Optimistic update sample](https://github.com/koushisa/recoil-aspida-architecture/blob/573f9d1ee7bf8f7fe1174ab8d5cce7c3e617ca55/src/features/subject/subject.root.tsx#L59-L70)
+- [Custom Mutation sample](https://github.com/koushisa/recoil-aspida-architecture/blob/573f9d1ee7bf8f7fe1174ab8d5cce7c3e617ca55/src/features/sandbox/sandbox.root.tsx#L23-L56)
 
 ### props-based api call
 
 - `useAtomWithAspida`
-  - [component](https://github.com/koushisa/recoil-aspida-architecture/blob/1ffae08266781bb47fc237249364e693f957f39a/src/features/subject/subject.item.tsx#L28-L43)
+  - [component](https://github.com/koushisa/recoil-aspida-architecture/blob/573f9d1ee7bf8f7fe1174ab8d5cce7c3e617ca55/src/features/subject/subject.item.tsx#L29-L42)
 - `atomWithFamily`
-  - [defs](https://github.com/koushisa/recoil-aspida-architecture/blob/c2712510df1c8ee534a682558874f6cab4210528/src/features/sandbox/sandbox.item.tsx#L9-L31)
-  - [component](https://github.com/koushisa/recoil-aspida-architecture/blob/c2712510df1c8ee534a682558874f6cab4210528/src/features/sandbox/sandbox.item.tsx#L55-L58)
+  - [defs](https://github.com/koushisa/recoil-aspida-architecture/blob/573f9d1ee7bf8f7fe1174ab8d5cce7c3e617ca55/src/features/sandbox/sandbox.item.tsx#L9-L29)
+  - [component](https://github.com/koushisa/recoil-aspida-architecture/blob/573f9d1ee7bf8f7fe1174ab8d5cce7c3e617ca55/src/features/sandbox/sandbox.item.tsx#L53-L56)
 
 
-## Utility 
+## Utilitiy 
 
-### atomWithAspida
+All utilities is included in here: 
 
-- [src](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/lib/recoil/integrations/aspida/atomWithAspida.ts#L40)
-- [component](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.root.tsx#L10-L19)
+https://github.com/koushisa/recoil-aspida-architecture/tree/main/src/lib/recoil/integrations
 
-### useAtomWithAspida
-
-- [src](https://github.com/koushisa/recoil-aspida-architecture/blob/c2712510df1c8ee534a682558874f6cab4210528/src/lib/recoil/integrations/aspida/atomWithAspida.ts#L300-L306)
-- [component](https://github.com/koushisa/recoil-aspida-architecture/blob/1ffae08266781bb47fc237249364e693f957f39a/src/features/subject/subject.item.tsx#L28-L43)
-
-### atomWithQuery
-
-- [src](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/lib/recoil/integrations/query/atomWithQuery/atomWithQuery.ts#L32)
-- [component](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/sandbox/sandbox.root.tsx#L18-L31)
-
-### atomWithQueryFamily
-
-- [src](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/lib/recoil/integrations/query/atomWithQuery/atomWithQuery.ts#L56)
-- [component](https://github.com/koushisa/recoil-aspida-sample/blob/1f3f5a97d0a1b6c03797717c48eeef3386b46ae8/src/features/subject/subject.item.tsx#L9-L24)
