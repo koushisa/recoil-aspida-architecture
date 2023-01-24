@@ -6,7 +6,7 @@ import {
   useQueryClient,
 } from '@tanstack/react-query'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
-import { TextSuspence } from '@/components/TextSuspence'
+import { TextSuspence } from '@/components/TextSuspense'
 import { AntiSubjectQuery } from '@/features/subject__anti/anti.hooks'
 
 import { aspida } from '@/lib/aspida'

@@ -1,6 +1,6 @@
 import { Box, Checkbox } from '@chakra-ui/react'
 import { createRHFContext } from '@/components/Form/shared/BaseInput'
-import { AppSpinnerSuspence } from '@/components/SpinnerSuspence'
+import { AppSpinnerSuspense } from '@/components/SpinnerSuspense'
 import { AntiSubjectFilter } from '@/features/subject__anti/anti.filter'
 import { AntiSubjectForm } from '@/features/subject__anti/anti.form'
 import { AntiSubjectForm_Optimistic } from '@/features/subject__anti/anti.form.optimistic'
@@ -57,9 +57,9 @@ export const AntiSubjectRoot = withFormProvider(() => {
       <Box padding={4}>
         <AntiSubjectFilter />
 
-        <AppSpinnerSuspence>
+        <AppSpinnerSuspense>
           <AntiSubjectList />
-        </AppSpinnerSuspence>
+        </AppSpinnerSuspense>
       </Box>
     </>
   )

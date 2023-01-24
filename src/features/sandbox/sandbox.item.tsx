@@ -1,6 +1,6 @@
 import { AccordionPanel, Button } from '@chakra-ui/react'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
-import { TextSuspence } from '@/components/TextSuspence'
+import { TextSuspence } from '@/components/TextSuspense'
 import { sandBoxSubjectList } from '@/features/sandbox/sandbox.root'
 import { aspida } from '@/lib/aspida'
 import { usePromise } from '@/lib/recoil/integrations/aspida/utils/usePromise'

@@ -5,6 +5,6 @@ type Props = {
   children: React.ReactNode
 }
 
-export const AppSpinnerSuspence: React.FC<Props> = ({ children }) => {
+export const AppSpinnerSuspense: React.FC<Props> = ({ children }) => {
   return <Suspense fallback={<AppSpinner />}>{children}</Suspense>
 }

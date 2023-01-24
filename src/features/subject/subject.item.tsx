@@ -1,6 +1,6 @@
 import { AccordionPanel, Button } from '@chakra-ui/react'
 import { FormStatus } from '@/components/Form/FormStatus/FormStatus'
-import { TextSuspence } from '@/components/TextSuspence'
+import { TextSuspense } from '@/components/TextSuspense'
 import { subjectListQuery } from '@/features/subject/subject.root'
 import { aspida } from '@/lib/aspida'
 import { useAtomWithAspida } from '@/lib/recoil/integrations/aspida/atomWithAspida'
@@ -13,14 +13,14 @@ type Props = {
 
 export const SubjectItem: React.FC<Props> = (props) => {
   return (
-    <TextSuspence
+    <TextSuspense
       boxProps={{
         padding: '4',
         height: BODY_HEIGHT,
       }}
       skeletonTextProps={{ noOfLines: 4 }}>
       <Comp {...props} />
-    </TextSuspence>
+    </TextSuspense>
   )
 }
 

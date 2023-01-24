@@ -1,6 +1,6 @@
 import { Box } from '@chakra-ui/react'
 import React from 'react'
-import { AppSpinnerSuspence } from '@/components/SpinnerSuspence'
+import { AppSpinnerSuspense } from '@/components/SpinnerSuspense'
 import { SubjectFilter } from '@/features/subject/subject.filter'
 import { SubjectForm } from '@/features/subject/subject.form'
 import { SubjectList } from '@/features/subject/subject.list'
@@ -43,9 +43,9 @@ export const SubjectRoot: React.FC = () => {
       <Box padding={4}>
         <SubjectFilter />
 
-        <AppSpinnerSuspence>
+        <AppSpinnerSuspense>
           <SubjectList />
-        </AppSpinnerSuspence>
+        </AppSpinnerSuspense>
       </Box>
     </>
   )

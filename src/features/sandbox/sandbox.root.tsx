@@ -2,7 +2,7 @@ import { Box, Button } from '@chakra-ui/react'
 import React from 'react'
 import type { MutationOption } from '@/lib/recoil/integrations/query/atomWithQuery/utils/mutate'
 import type { Subject } from 'api/api/v1/subjects'
-import { AppSpinnerSuspence } from '@/components/SpinnerSuspence'
+import { AppSpinnerSuspense } from '@/components/SpinnerSuspense'
 import { SandboxSubjectFilter } from '@/features/sandbox/sandbox.filter'
 import { SandboxSubjectForm } from '@/features/sandbox/sandbox.form'
 import { SandboxSubjectList } from '@/features/sandbox/sandbox.list'
@@ -83,9 +83,9 @@ export const SandboxSubjectRoot: React.FC = () => {
         <Button onClick={refetch}>refetch</Button>
         <Button onClick={() => log({ hoge: 'hoge' })}>log current state</Button>
 
-        <AppSpinnerSuspence>
+        <AppSpinnerSuspense>
           <SandboxSubjectList />
-        </AppSpinnerSuspence>
+        </AppSpinnerSuspense>
       </Box>
     </>
   )

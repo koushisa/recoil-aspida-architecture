@@ -11,7 +11,7 @@ export const FormStatus: React.FC<{ formStatus: FormStatus }> = ({
 }) => {
   return (
     <>
-      {pending && <Pending />} {success && <Success />}{' '}
+      {pending && <Pending />} {success && <Success />}
       {error && <Error error={error} />}
     </>
   )

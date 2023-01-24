@@ -26,7 +26,7 @@ const Skeleton: React.FC<SkeletonProps> = ({ boxProps, skeletonTextProps }) => {
   )
 }
 
-const TextSuspence: React.FC<Props> = ({
+const TextSuspense: React.FC<Props> = ({
   boxProps,
   skeletonTextProps,
   children,
@@ -41,4 +41,4 @@ const TextSuspence: React.FC<Props> = ({
   )
 }
 
-export { TextSuspence }
+export { TextSuspense }

@@ -1,6 +1,6 @@
 import { Tab, TabList, TabPanel, TabPanels, Tabs } from '@chakra-ui/react'
 
-import { AppSpinnerSuspence } from '@/components/SpinnerSuspence'
+import { AppSpinnerSuspense } from '@/components/SpinnerSuspense'
 // import { AntiSubjectRoot } from '@/features/subject__anti/anti.root'
 // import { SandboxSubjectRoot } from '@/features/sandbox/sandbox.root'
 import { StudentList } from '@/features/student/student.list'
@@ -23,9 +23,9 @@ export const Root = () => {
         </TabPanel>
         <TabPanel>
           <h1>Students</h1>
-          <AppSpinnerSuspence>
+          <AppSpinnerSuspense>
             <StudentList />
-          </AppSpinnerSuspence>
+          </AppSpinnerSuspense>
         </TabPanel>
       </TabPanels>
     </Tabs>
