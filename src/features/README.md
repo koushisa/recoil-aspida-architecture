@@ -1,0 +1,2 @@
+- 機能(feature)単位でディレクトリを切る
+- feature間のimportは禁止
